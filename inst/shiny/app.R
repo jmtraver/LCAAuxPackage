@@ -20,11 +20,11 @@ ui <- fluidPage(
     fileInput("file1", "Choose a File"),
 
     selectInput(
-      'myselectinput',
+      'DependentVar',
       'Select your dependent variable:', ""),
 
     selectInput(
-      'myselectinput2',
+      'ProbCols',
       'Select your posterior probability columns:', "",
       multiple = TRUE),
 
@@ -55,8 +55,12 @@ server <- function(input, output,session) {
     reactives$mydata <- read.csv(file = input$file1$datapath)
 
     #Update select input
-    updateSelectInput(session, inputId = 'myselectinput', label = 'Select your dependent variable:', choices  = colnames(reactives$mydata))
-    updateSelectInput(session, inputId = 'myselectinput2', label = 'Select your posterior probability columns:', choices  = colnames(reactives$mydata))
+    updateSelectInput(session, inputId = 'DependentVar',
+                      label = 'Select your dependent variable:',
+                      choices  = colnames(reactives$mydata))
+    updateSelectInput(session, inputId = 'ProbCols',
+                      label = 'Select your posterior probability columns:',
+                      choices  = colnames(reactives$mydata))
 
   })
 
