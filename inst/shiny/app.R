@@ -8,44 +8,59 @@
 #
 
 library(shiny)
+library(bslib)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
+  theme = bslib::bs_theme(bootswatch = "cerulean"),
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("BCH Procedure for LCA with Auxilary Variables"),
+    #Upload a File:
+    fileInput("file1", "Choose a File"),
 
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
+    selectInput(
+      'myselectinput',
+      'Select your dependent variable:', ""),
 
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
-    )
+    selectInput(
+      'myselectinput2',
+      'Select your posterior probability columns:', "",
+      multiple = TRUE),
+
+
+    #Select your model
+    selectInput(
+      "select",
+      "Select your model:",
+      list("Latent Class Model" = "1A", "Latent Profile Model" = "1B", "Growth Mixture Model" = "1C")
+    ),
+
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
+server <- function(input, output,session) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+  #Reactive to store loaded data
+  reactives <- reactiveValues(
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+    mydata = NULL
+
+  )
+
+  #Observe file being selected
+  observeEvent(input$file1, {
+
+    #Store loaded data in reactive
+    reactives$mydata <- read.csv(file = input$file1$datapath)
+
+    #Update select input
+    updateSelectInput(session, inputId = 'myselectinput', label = 'Select your dependent variable:', choices  = colnames(reactives$mydata))
+    updateSelectInput(session, inputId = 'myselectinput2', label = 'Select your posterior probability columns:', choices  = colnames(reactives$mydata))
+
+  })
+
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
