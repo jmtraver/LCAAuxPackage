@@ -9,6 +9,7 @@
 
 library(shiny)
 library(bslib)
+library(stats)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -19,11 +20,11 @@ ui <- fluidPage(
     #Upload a File:
     fileInput("file1", "Choose a File"),
 
-    selectInput(
+    varSelectInput(
       'DependentVar',
       'Select your dependent variable:', ""),
 
-    selectInput(
+    varSelectInput(
       'ProbCols',
       'Select your posterior probability columns:', "",
       multiple = TRUE),
@@ -35,6 +36,9 @@ ui <- fluidPage(
       "Select your model:",
       list("Latent Class Model" = "1A", "Latent Profile Model" = "1B", "Growth Mixture Model" = "1C")
     ),
+
+  mainPanel("Summary Output",
+           verbatimTextOutput("RegOut")),
 
 )
 
@@ -52,17 +56,24 @@ server <- function(input, output,session) {
   observeEvent(input$file1, {
 
     #Store loaded data in reactive
-    reactives$mydata <- read.csv(file = input$file1$datapath)
+  reactives$mydata <- read.csv(file = input$file1$datapath)
 
     #Update select input
-    updateSelectInput(session, inputId = 'DependentVar',
+  updateSelectInput(session, inputId = 'DependentVar',
                       label = 'Select your dependent variable:',
                       choices  = colnames(reactives$mydata))
-    updateSelectInput(session, inputId = 'ProbCols',
+  updateSelectInput(session, inputId = 'ProbCols',
                       label = 'Select your posterior probability columns:',
                       choices  = colnames(reactives$mydata))
 
   })
+
+
+
+  output$RegOut = renderPrint({
+    req(input$file1) #require input file
+    req(input$file1$DependentVar) #require dependent var
+    summary(input$file1$DependentVar)})
 
 }
 
