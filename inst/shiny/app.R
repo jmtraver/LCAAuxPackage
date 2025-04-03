@@ -10,72 +10,80 @@
 library(shiny)
 library(bslib)
 library(stats)
+library(ggplot2)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "cerulean"),
+  titlePanel( "BCH Procedure for LCA with Distal Outcome"),
+  p("This shiny app can be used to conduct the BCH procedure on an LCA model to
+    accurately predict a distal outcome."),
+  p("To use the app, you first must fit your LCA (without an outcome) in the modeling software of your choice.
+    Create a CSV file that includes your dependent variable and columns indicating the probaiblity of
+    class membership."),
 
-    # Application title
-    titlePanel("BCH Procedure for LCA with Auxilary Variables"),
-    #Upload a File:
-    fileInput("file1", "Choose a File"),
+   sidebarLayout(
+    sidebarPanel(
+      # inputs
+      fileInput("file1", "Choose a File"),
 
-    varSelectInput(
-      'DependentVar',
-      'Select your dependent variable:', ""),
+      varSelectInput(
+        'DependentVar',
+        'Select your dependent variable:', ""),
 
-    varSelectInput(
-      'ProbCols',
-      'Select your posterior probability columns:', "",
-      multiple = TRUE),
+      varSelectInput(
+        'ProbCols',
+        'Select your posterior probability columns:', "",
+        multiple = TRUE),
 
-
-    #Select your model
-    selectInput(
-      "select",
-      "Select your model:",
-      list("Latent Class Model" = "1A", "Latent Profile Model" = "1B", "Growth Mixture Model" = "1C")
+      #Select your model
+      selectInput(
+        "select",
+        "Select your model:",
+        list("Latent Class Model" = "1A", "Latent Profile Model" = "1B", "Growth Mixture Model" = "1C")
+      ),
     ),
 
-  mainPanel("Summary Output",
-           verbatimTextOutput("RegOut")),
+    mainPanel(
 
+      # outputs
+      tableOutput("contents"),
+      plotOutput("plot")
+
+    )
+  )
 )
+
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output,session) {
 
   #Reactive to store loaded data
-  reactives <- reactiveValues(
-
-    mydata = NULL
-
-  )
+  reactives <- reactiveValues(mydata = NULL)
 
   #Observe file being selected
   observeEvent(input$file1, {
 
     #Store loaded data in reactive
-  reactives$mydata <- read.csv(file = input$file1$datapath)
+    reactives$mydata <- read.csv(file = input$file1$datapath)
 
-    #Update select input
-  updateSelectInput(session, inputId = 'DependentVar',
+    #Update select input to reflect column names
+    updateSelectInput(session, inputId = 'DependentVar',
                       label = 'Select your dependent variable:',
                       choices  = colnames(reactives$mydata))
-  updateSelectInput(session, inputId = 'ProbCols',
+    updateSelectInput(session, inputId = 'ProbCols',
                       label = 'Select your posterior probability columns:',
                       choices  = colnames(reactives$mydata))
 
   })
 
+    output$contents <- renderTable(reactives$mydata)
+    output$plot <- renderPlot(hist(reactives$mydata[,1]))
+
+  }
 
 
-  output$RegOut = renderPrint({
-    req(input$file1) #require input file
-    req(input$file1$DependentVar) #require dependent var
-    summary(input$file1$DependentVar)})
-
-}
 
 # Run the application
 shinyApp(ui = ui, server = server)
