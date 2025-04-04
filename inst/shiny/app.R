@@ -12,7 +12,6 @@ library(bslib)
 library(stats)
 library(ggplot2)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "cerulean"),
   titlePanel( "BCH Procedure for LCA with Distal Outcome"),
@@ -21,77 +20,85 @@ ui <- fluidPage(
   p("To use the app, you first must fit your LCA (without an outcome) in the modeling software of your choice.
     Create a CSV file that includes your dependent variable and columns indicating the probaiblity of
     class membership."),
-
-   sidebarLayout(
+  sidebarLayout(
     sidebarPanel(
-      # inputs
-      fileInput("file1", "Choose a File"),
-
-      varSelectInput(
-        'DependentVar',
-        'Select your dependent variable:', ""),
-
-      varSelectInput(
-        'ProbCols',
-        'Select your posterior probability columns:', "",
-        multiple = TRUE),
-
-      #Select your model
-      selectInput(
-        "select",
-        "Select your model:",
-        list("Latent Class Model" = "1A", "Latent Profile Model" = "1B", "Growth Mixture Model" = "1C")
-      ),
+      fileInput("file", "Upload CSV File", accept = ".csv"),
+      uiOutput("var_select"),
+      uiOutput("indep_select"),
+      actionButton("submit_btn", "Let's Go!")
     ),
-
     mainPanel(
-
-      # outputs
-      verbatimTextOutput("equation")
-
+      h4("Regression Equation"),
+      textOutput("regression_equation"),
+      br(),
+      h4("Regression Output"),
+      verbatimTextOutput("regression_summary")
     )
   )
 )
 
-
-
-# Define server logic required to draw a histogram
-server <- function(input, output,session) {
-
-  #Reactive to store loaded data
-  reactives <- reactiveValues(mydata = NULL)
-
-  #Observe file being selected
-  observeEvent(input$file1, {
-
-    #Store loaded data in reactive
-    reactives$mydata <- read.csv(file = input$file1$datapath)
-
-    #Update select input to reflect column names
-    updateSelectInput(session, inputId = 'DependentVar',
-                      label = 'Select your dependent variable:',
-                      choices  = colnames(reactives$mydata))
-    updateSelectInput(session, inputId = 'ProbCols',
-                      label = 'Select your posterior probability columns:',
-                      choices  = colnames(reactives$mydata))
-
+server <- function(input, output, session) {
+  # Load data
+  data_reactive <- reactive({
+    req(input$file)
+    read.csv(input$file$datapath)
   })
 
-  output$equation <- renderText({
-    ivars <- input$ProbCols
-    dvars <- input$DependentVars
-    coef_names <- paste0("B", seq_along(ivars))
-    terms <- paste0(coef_names, "*", ivars, collapse = " + ")
-    paste(input$DependentVar, "=", terms)
+  # UI for selecting variables
+  output$var_select <- renderUI({
+    req(data_reactive())
+    selectInput("dep_var", "Dependent Variable:", choices = names(data_reactive()))
   })
 
+  output$indep_select <- renderUI({
+    req(data_reactive(), input$dep_var)
+    selectInput("indep_vars", "Independent Variables:",
+                choices = setdiff(names(data_reactive()), input$dep_var),
+                multiple = TRUE)
+  })
 
+  # Store regression result
+  values <- reactiveValues(
+    equation = NULL,
+    model = NULL
+  )
 
+  # Run regression after button click
+  observeEvent(input$submit_btn, {
+    req(input$dep_var, input$indep_vars)
+    req(length(input$indep_vars) > 0)
 
+    df <- data_reactive()
 
-  }
+    # Make sure all selected columns exist in data
+    if (!all(c(input$dep_var, input$indep_vars) %in% names(df))) {
+      values$equation <- "Selected variables not found in the dataset."
+      values$model <- NULL
+      return()
+    }
 
+    # Fit model
+    formula_str <- paste(input$dep_var, "~", paste(input$indep_vars, collapse = " + "))
+    model <- lm(as.formula(formula_str), data = df)
 
+    # Create equation string
+    coef_names <- paste0("B", seq_along(input$indep_vars))
+    equation_terms <- paste0(coef_names, "*", input$indep_vars, collapse = " + ")
+    equation <- paste(input$dep_var, "=", equation_terms)
 
-# Run the application
-shinyApp(ui = ui, server = server)
+    values$equation <- equation
+    values$model <- model
+  })
+
+  output$regression_equation <- renderText({
+    req(values$equation)
+    values$equation
+  })
+
+  output$regression_summary <- renderPrint({
+    req(values$model)
+    summary(values$model)
+  })
+}
+
+shinyApp(ui, server)
