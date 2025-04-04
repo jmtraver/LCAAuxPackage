@@ -47,8 +47,7 @@ ui <- fluidPage(
     mainPanel(
 
       # outputs
-      tableOutput("contents"),
-      plotOutput("plot")
+      verbatimTextOutput("equation")
 
     )
   )
@@ -78,8 +77,17 @@ server <- function(input, output,session) {
 
   })
 
-    output$contents <- renderTable(reactives$mydata)
-    output$plot <- renderPlot(hist(reactives$mydata[,1]))
+  output$equation <- renderText({
+    ivars <- input$ProbCols
+    dvars <- input$DependentVars
+    coef_names <- paste0("B", seq_along(ivars))
+    terms <- paste0(coef_names, "*", ivars, collapse = " + ")
+    paste(input$DependentVar, "=", terms)
+  })
+
+
+
+
 
   }
 
