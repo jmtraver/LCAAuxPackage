@@ -1,21 +1,34 @@
-mx_BCH <- function(model = NULL, formula.tmb = NULL, n.class = NULL, data = NULL,
-                   post.prob = NULL, prior.prob = NULL, family = gaussian(),
-                   robust.se = "none", id = NULL) {
+
+# ---------------------------------- mx_BCH() ----------------------------------
+
+# This function takes
+
+mx_BCH <- function(formula.tmb = NULL, # throw error if NULL
+                   data = NULL,        # throw error if NULL
+                   post.prob = NULL,   # throw error if NULL
+                   prior.prob = NULL,
+                   family = gaussian(),
+                   robust.se = "none",
+                   id = NULL,
+                   reference_group = 1   # reference group when latent class is predictor
+                   ) {
 
   # Initialize values
-  n_class <- n.class
+  n_class <- length(post.prob)
 
   # Get modal class assignment
-  data <- get_class_dummies(data, post.prob)    # not tested yet
+  data <- get_class_dummies(data = data, post.prob = post.prob)
 
   # Get formula
-  new_formula <- get_frm(frm.original = formula.tmb, n.class = n_class)
+  new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,
+                         reference_group = reference_group)
 
   if (is.null(prior.prob)) {
     prior_probs <- colMeans(data[ , post.prob])
-  } #else {
-  #prior_probs <- prior.prob
-  # }
+  } else {
+  prior_probs <- prior.prob
+  }
+
   D <- matrix(NA, nrow = n_class, ncol = n_class)
 
   # Compute D matrix
@@ -28,6 +41,7 @@ mx_BCH <- function(model = NULL, formula.tmb = NULL, n.class = NULL, data = NULL
   }
   # Solve D matrix
   weights <- solve(D)
+
   # Pivot longer
   data_long <- data[rep(1:nrow(data), each = n_class), ]
   data_long$class_new <- rep(1:n_class, times = nrow(data))
@@ -38,8 +52,15 @@ mx_BCH <- function(model = NULL, formula.tmb = NULL, n.class = NULL, data = NULL
     data_long[data_long$class_new == i, "wstar_it"] <-
       # Take the sum of the probabilities in the columns class1, 2 and 3 times their
       # respective weights (= their values in the t(Dstar) matrix)
-      rowSums(data_long[data_long$class_new == i, c("class1", "class2", "class3")] * weights[i, ])
+      rowSums(data_long[data_long$class_new == i, paste0("class", 1:n_class)] * weights[i, ])
+
   }
-  fit1 <- glmmTMB(formula.tmb, weights = wstar_it, contrasts=NULL, data = data_long)
+  # fit1 <- glmmTMB(formula.tmb, weights = wstar_it, contrasts=NULL, data = data_long)
+  fit1 <- glmmTMB(new_formula,
+                  weights = wstar_it,
+                  # contrasts = NULL,
+                  data = data_long,
+                  family = family)
+
   return(fit1)
 }

@@ -1,19 +1,17 @@
 
-# -------------------------------- get_dummies ---------------------------------
+# ------------------------------- get_dummies() --------------------------------
 
-# Create modal class assignment dummy variables
-
-# helper
-# colMax function
-colMax <- function (data) {
-  do.call(pmax, data)
-}
+# This function creates a new data.frame that includes the modal class
+# assignment dummy variables
 
 # function
 get_class_dummies <- function(data, post.prob) {
 
-  # get highest posterior probability per person
-  data$max_post <- colMax(data[post.prob])
+  # number of classes
+  n_class <- length(post.prob)
+
+  # get highest posterior probability per row
+  data$max_post <- colMax(data[, post.prob])
 
   # create dummy variables class1 to classn_class with modal class assignment
   for (i in 1:nrow(data)) {
@@ -26,4 +24,10 @@ get_class_dummies <- function(data, post.prob) {
     }
   }
   return(data)
+}
+
+
+# helper: colMax function
+colMax <- function (data) {
+  do.call(pmax, data)
 }
