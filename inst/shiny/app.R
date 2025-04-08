@@ -25,6 +25,7 @@ ui <- fluidPage(
       fileInput("file", "Upload CSV File", accept = ".csv"),
       uiOutput("var_select"),
       uiOutput("indep_select"),
+      uiOutput('prob_select'),
       actionButton("submit_btn", "Let's Go!")
     ),
     mainPanel(
@@ -47,12 +48,19 @@ server <- function(input, output, session) {
   # UI for selecting variables
   output$var_select <- renderUI({
     req(data_reactive())
-    selectInput("dep_var", "Dependent Variable:", choices = names(data_reactive()))
+    selectInput("dep_var", "Select Dependent Variable:", choices = names(data_reactive()))
   })
 
   output$indep_select <- renderUI({
     req(data_reactive(), input$dep_var)
-    selectInput("indep_vars", "Independent Variables:",
+    selectInput("indep_vars", "Select Covariates:",
+                choices = setdiff(names(data_reactive()), input$dep_var),
+                multiple = TRUE)
+    })
+
+  output$prob_select <- renderUI({
+    req(data_reactive())
+    selectInput("prob_vars", "Select Class Probability Columns:",
                 choices = setdiff(names(data_reactive()), input$dep_var),
                 multiple = TRUE)
   })
@@ -71,19 +79,22 @@ server <- function(input, output, session) {
     df <- data_reactive()
 
     # Make sure all selected columns exist in data
-    if (!all(c(input$dep_var, input$indep_vars) %in% names(df))) {
+    if (!all(c(input$dep_var, input$indep_vars, input$prob_vars) %in% names(df))) {
       values$equation <- "Selected variables not found in the dataset."
       values$model <- NULL
       return()
     }
 
     # Fit model
-    formula_str <- paste(input$dep_var, "~", paste(input$indep_vars, collapse = " + "))
-    model <- lm(as.formula(formula_str), data = df)
+    formula_str <- paste(input$dep_var, "~", paste(input$indep_vars, collapse = " + "), " + ",
+                           paste(input$prob_vars, collapse = " + "))
+    model <- glm(as.formula(formula_str), data = df)
 
     # Create equation string
-    coef_names <- paste0("B", seq_along(input$indep_vars))
-    equation_terms <- paste0(coef_names, "*", input$indep_vars, collapse = " + ")
+    my_coefs <- c(input$indep_vars, input$prob_vars)
+    coef_names <- paste0("B", seq_along(my_coefs))
+    equation_terms <- paste0(coef_names, "*", my_coefs, collapse = " + ")
+
     equation <- paste(input$dep_var, "=", equation_terms)
 
     values$equation <- equation
