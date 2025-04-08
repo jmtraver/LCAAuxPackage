@@ -12,17 +12,17 @@ mx_BCH <- function(formula.tmb = NULL,
                    id = NULL,     # Do we still need?
                    reference_group = 1   # reference group when latent class is predictor
                    ) {
-
+  # Stop if formula is NULL
   if (is.null(formula.tmb)) {
     stop("mx_BCH Error: formula cannot be NULL. Specify a formula object.")
   }
-
+  # Stop if data is NULL
   if (is.null(data)) {
     stop("mx_BCH Error: data cannot be NULL. Specify a data frame.")
   }
-
+  # Stop if post probabilities are NULL
   if (is.null(post.prob)) {
-    stop("mx_BCH Error: post.prob cannot be NULL. Indicate a list of class probabilities.")
+    stop("mx_BCH Error: post.prob cannot be NULL. Indicate a list of class probability columns.")
   }
 
   # Initialize values
@@ -32,15 +32,18 @@ mx_BCH <- function(formula.tmb = NULL,
   data <- get_class_dummies(data = data, post.prob = post.prob)
 
   # Get formula
-  new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,
-                         reference_group = reference_group)
+  #new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,    ## Was causing error - JE
+  #                       reference_group = reference_group)
+  new_formula <- formula.tmb
 
+  # Calculate prior probabilities if NULL
   if (is.null(prior.prob)) {
-    prior_probs <- colMeans(data[ , post.prob])
-  } else {
-  prior_probs <- prior.prob
+    prior.prob <- colMeans(data[ , post.prob])
   }
+  # Save prior probabilities
+  prior_probs <- prior.prob
 
+  # Initialize D matrix
   D <- matrix(NA, nrow = n_class, ncol = n_class)
 
   # Compute D matrix
@@ -52,7 +55,7 @@ mx_BCH <- function(formula.tmb = NULL,
     }
   }
   # Solve D matrix
-  weights <- solve(D)
+  weights <- solve(D)             # Should we transpose as well???
 
   # Pivot longer
   data_long <- data[rep(1:nrow(data), each = n_class), ]
