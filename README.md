@@ -35,6 +35,15 @@ Shiny:
 - Upload a dataset that includes posterior probabilities, designate where they are, designate distal outcome of interest (is it binary, count, continuous)
 - Visualizations of differences
 
+Class 4/8:
+- Using glmmTMB()
+- Step 1: function to create the matrix that is needed, then pass this to glmmTMB(), translate to GLM output
+- Long format data
+- Plan:
+    - Hanna & James finish the function
+    - Need to test the function (looking ONLY at the estimates; what if I fit it using factor rather than numeric, has an interaction, missing data, etc)
+    - Jen will help write the error traps
+
 - For testing: we can use the data and output that Dan already sent
 
   
