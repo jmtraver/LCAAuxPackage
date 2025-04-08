@@ -26,6 +26,7 @@ ui <- fluidPage(
       uiOutput("var_select"),
       uiOutput("indep_select"),
       uiOutput('prob_select'),
+      uiOutput('fam_select'),
       actionButton("submit_btn", "Let's Go!")
     ),
     mainPanel(
@@ -65,6 +66,13 @@ server <- function(input, output, session) {
                 multiple = TRUE)
   })
 
+  output$fam_select <- renderUI({
+    req(data_reactive())
+    selectInput("fam_choice", "Select Family:",
+                choices = c("gaussian", "binomial", "poisson"),
+                multiple = FALSE)
+  })
+
   # Store regression result
   values <- reactiveValues(
     equation = NULL,
@@ -88,7 +96,8 @@ server <- function(input, output, session) {
     # Fit model
     formula_str <- paste(input$dep_var, "~", paste(input$indep_vars, collapse = " + "), " + ",
                            paste(input$prob_vars, collapse = " + "))
-    model <- glm(as.formula(formula_str), data = df)
+    fam_name <- paste0(input$fam_choice)
+    model <- glm(as.formula(formula_str), data = df, family = fam_name)
 
     # Create equation string
     my_coefs <- c(input$indep_vars, input$prob_vars)
