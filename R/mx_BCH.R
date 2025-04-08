@@ -1,9 +1,15 @@
-mx_BCH <- function(model=NULL, formula.tmb=NULL, n.class=NULL,data=NULL,
-                   post.prob=NULL, prior.prob = NULL, familly="gaussian",
-                   robust.se="none", id=NULL) {
+mx_BCH <- function(model = NULL, formula.tmb = NULL, n.class = NULL, data = NULL,
+                   post.prob = NULL, prior.prob = NULL, family = gaussian(),
+                   robust.se = "none", id = NULL) {
 
   # Initialize values
-  n_class = n.class
+  n_class <- n.class
+
+  # Get modal class assignment
+  data <- get_class_dummies(data, post.prob)    # not tested yet
+
+  # Get formula
+  new_formula <- get_frm(frm.original = formula.tmb, n.class = n_class)
 
   if (is.null(prior.prob)) {
     prior_probs <- colMeans(data[ , post.prob])
