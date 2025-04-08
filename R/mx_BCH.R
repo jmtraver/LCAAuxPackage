@@ -3,15 +3,27 @@
 
 # This function takes
 
-mx_BCH <- function(formula.tmb = NULL, # throw error if NULL
-                   data = NULL,        # throw error if NULL
-                   post.prob = NULL,   # throw error if NULL
+mx_BCH <- function(formula.tmb = NULL,
+                   data = NULL,
+                   post.prob = NULL,
                    prior.prob = NULL,
                    family = gaussian(),
                    robust.se = "none",
-                   id = NULL,
+                   id = NULL,     # Do we still need?
                    reference_group = 1   # reference group when latent class is predictor
                    ) {
+
+  if (is.null(formula.tmb)) {
+    stop("mx_BCH Error: formula cannot be NULL. Specify a formula object.")
+  }
+
+  if (is.null(data)) {
+    stop("mx_BCH Error: data cannot be NULL. Specify a data frame.")
+  }
+
+  if (is.null(post.prob)) {
+    stop("mx_BCH Error: post.prob cannot be NULL. Indicate a list of class probabilities.")
+  }
 
   # Initialize values
   n_class <- length(post.prob)
