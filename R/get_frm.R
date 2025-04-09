@@ -10,6 +10,16 @@ library(stringr)
 # function
 get_frm <- function(frm_original, n_class, reference_group = 1) {
 
+  # check if latent_class was included in formula
+  fc <- as.character(frm_original)
+  frm_char <- paste0(c(fc[2], fc[1], fc[3]), collapse = " ")
+  check_LC <- stringr::str_detect(frm_char, "latent_class")
+  if (check_LC == FALSE) {
+    stop(paste0("'latent_class' not included in formula: ",
+                frm_char,
+                "\nCheck spelling or different analytic method."))
+  }
+
   # extract outcome information
   outcome <- as.character(frm_original)[2]
 
@@ -32,10 +42,7 @@ get_frm <- function(frm_original, n_class, reference_group = 1) {
 }
 
 # # Test function
-# my_frm <- outcome ~ pred1 + latent_class + pred2
-# new_frm <- get_frm(my_frm, n.class = 3)
+# my_frm <- y ~  x + x3 + g
+# new_frm <- get_frm(my_frm, n_class = 2)
 # new_frm
-
-
-
 

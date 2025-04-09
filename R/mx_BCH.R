@@ -75,6 +75,7 @@ mx_BCH <- function(formula.tmb = NULL,
 
   }
   # fit1 <- glmmTMB(formula.tmb, weights = wstar_it, contrasts=NULL, data = data_long)
+
   fit1 <- glmmTMB(new_formula,
                   weights = wstar_it,
                   # contrasts = NULL,
