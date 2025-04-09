@@ -37,7 +37,7 @@ ui <- fluidPage(
       verbatimTextOutput("regression_summary"),
       br(),
       h4("Means Across Latent Classes"),
-      plotOutput("bar_plot"),
+      plotOutput("col_plot"),
     )
   )
 )
@@ -123,9 +123,10 @@ server <- function(input, output, session) {
     summary(values$model)
   })
 
-  output$bar_plot <- renderPlot({
-    ggplot(y = input$dep_var) + geom_bar()
+  output$col_plot <- renderPlot({
+    req(input$dep_var, input$prob_vars)
   })
+
 }
 
 shinyApp(ui, server)
