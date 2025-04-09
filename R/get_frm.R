@@ -20,11 +20,25 @@ get_frm <- function(frm_original, n_class, reference_group = 1) {
                 "\nCheck spelling or different analytic method."))
   }
 
+  # check if reference group is realistic
+  if (reference_group > n_class) {
+    stop(paste0("The reference group (",
+                reference_group
+                ,") exceeds the total number of latent classes"))
+  }
+
+  # check if ":" or "*" is in formula - if yes stop for now
+  # if (reference_group > n_class) {
+  #   stop(paste0("The reference group (",
+  #               reference_group
+  #               ,") exceeds the total number of latent classes"))
+  # }
+
   # extract outcome information
-  outcome <- as.character(frm_original)[2]
+  outcome <- fc[2]
 
   # extract predictor information
-  pred_info <- as.character(frm_original)[3]
+  pred_info <- fc[3]
 
   # extract other predictor(s) that are not latent_class
   other_preds <- stringr::str_split(pred_info, "latent_class")[[1]]
@@ -42,7 +56,7 @@ get_frm <- function(frm_original, n_class, reference_group = 1) {
 }
 
 # # Test function
-# my_frm <- y ~  x + x3 + g
-# new_frm <- get_frm(my_frm, n_class = 2)
+# my_frm <- y ~  latent_class*x
+# new_frm <- get_frm(my_frm, n_class = 5, reference_group = 1)
 # new_frm
 
