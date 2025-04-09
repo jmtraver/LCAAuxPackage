@@ -30,6 +30,8 @@ summary.mx_glm <- function(object,
 
   # Show preliminary results
   class(mx_summary) <- 'mx_summary'
+
+  print(mx_summary$coefficients)
   return(mx_summary)
 
 }
