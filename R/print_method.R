@@ -1,0 +1,27 @@
+
+# ---------------------------- print.mx_summary()  -----------------------------
+
+## idea:
+# - this should print whatever we want the user to see when they call our
+#   summary function
+
+# Note: this is a very rudimentary version.
+
+
+# Only works when loaded into the environment?                              ####
+
+print.mx_summary <- function(m) {
+
+  time_diff <- m$time
+  output <- m$coefficients
+
+  if(!is.null(time_diff)) {
+    print(time_diff)
+  }
+
+  # Pretty output
+  cat("\n")
+  print(output)
+  cat("\n")
+
+}

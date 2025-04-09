@@ -31,11 +31,15 @@ summary.mx_glm <- function(object,
   # Get summary results
   mx_summary <- boot_summary(boot_results, alpha = alpha, ci = show.ci)
 
+  if (check.time == TRUE) {
+    mx_summary$time <- boot_results$time
+  }
+
   # Show preliminary results
   class(mx_summary) <- 'mx_summary'
 
-  print(mx_summary$coefficients)
-  # return(mx_summary)
+  # print(mx_summary$coefficients)
+  return(mx_summary)
 
 }
 

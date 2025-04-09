@@ -79,7 +79,7 @@ cluster_boot <- function(mx_glm_obj,
 
   if (check.time == TRUE) {
     time_2 <- Sys.time()
-    print(time_2 - time_1)            ##### THIS TAKES FOREVER
+    boot_return$time <- time_2 - time_1
   }
 
   return(boot_return)
