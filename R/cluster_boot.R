@@ -38,21 +38,10 @@ cluster_boot <- function(mx_glm_obj,
   set.seed(seed)
 
   # model on original data
-  # this is not necessary I believe, but it shouldn't add too much runtime
-  # orig_model <- glmmTMB(formula = formula, data = data, family = family,
-  #                       weights = wstar_it)
-
   orig_model <- mx_glm_obj
   class(orig_model) <- 'glmmTMB'
-
   orig_param <- summary(orig_model)$coefficients$cond[, "Estimate"]
   p <- length(orig_param)
-  # alternative is to extract the parameter information INCLUDING the rownames
-  # of all effects from the mx_glm_obj directly
-
-  # !!!!!!!!
-  # change class of mx_glm_obj to 'glmmTMB' and then use summary!!
-
 
   # initiate bootstrap results matrix
   boot_results <- matrix(NA, nrow = B, ncol = p)
@@ -66,7 +55,7 @@ cluster_boot <- function(mx_glm_obj,
     # initiate data file without any rows
     data_boot <- data %>% dplyr::filter(id == -1)
     # select all datapoints from each sampled cluster and build new dataframe
-    for (i in sort(new_ids)) {                             # sort is not necessary
+    for (i in sort(new_ids)) {  # sort is not necessary but nice for debug
       one_cluster <- data %>% dplyr::filter(id == i)
       data_boot <- rbind(data_boot, one_cluster)
     }
