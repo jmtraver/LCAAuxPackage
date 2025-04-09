@@ -17,7 +17,7 @@
 
 # Only works when loaded into the environment?                              ####
 
-summary.mx_glm <- function(object,
+summary.mxGlm <- function(object,
                            B = 999,
                            seed = NULL,
                            alpha = 0.05,
@@ -36,7 +36,7 @@ summary.mx_glm <- function(object,
   }
 
   # Show preliminary results
-  class(mx_summary) <- 'mx_summary'
+  class(mx_summary) <- 'mxSummary'
 
   # print(mx_summary$coefficients)
   return(mx_summary)

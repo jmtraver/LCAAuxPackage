@@ -10,7 +10,7 @@
 
 # Only works when loaded into the environment?                              ####
 
-print.mx_summary <- function(m) {
+print.mxSummary <- function(m) {
 
   time_diff <- m$time
   output <- m$coefficients
