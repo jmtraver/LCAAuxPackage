@@ -8,7 +8,7 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE) {
   boot_coefs <- boot_return$boot_results
   orig_coefs <- boot_return$coefs
 
-  boot_means <- colMeans(boot_coefs)               ###
+  boot_means <- colMeans(boot_coefs)               ####
 
   # get bootstrap standard error
   boot_se <- apply(boot_coefs, 2, sd)
@@ -24,6 +24,12 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE) {
                         check.names = FALSE
   )
 
+  summary_return <- list(coefficients = results,
+                         alpha = alpha,
+                         ci = ci,
+                         boot_means = boot_means,
+                         check.names = FALSE)
+
   if (ci == TRUE) {
     z_crit <- qnorm(1 - alpha/2)
     LL <- orig_coefs - z_crit*boot_se
@@ -31,14 +37,9 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE) {
 
     results_ci <- data.frame(`LL` = LL,
                              `UL` = UL)
-  }
 
-  summary_return <- list(coefficients = results,
-                         conf_int = results_ci,
-                         alpha = alpha,
-                         ci = ci,
-                         boot_means = boot_means,
-                         check.names = FALSE)
+    summary_return$conf_int <- results_ci
+  }
 
   return(summary_return)
 }

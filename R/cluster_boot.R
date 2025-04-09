@@ -3,6 +3,9 @@
 
 # ...description...
 
+# dependency
+library(dplyr)
+
 cluster_boot <- function(mx_glm_obj,
                          B = 999,
                          seed = NULL,

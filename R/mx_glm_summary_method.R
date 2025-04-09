@@ -14,6 +14,9 @@
 # - alpha = 0.5
 # - show.ci = FALSE
 
+
+# Only works when loaded into the environment?                              ####
+
 summary.mx_glm <- function(object,
                            B = 999,
                            seed = NULL,
@@ -32,7 +35,7 @@ summary.mx_glm <- function(object,
   class(mx_summary) <- 'mx_summary'
 
   print(mx_summary$coefficients)
-  return(mx_summary)
+  # return(mx_summary)
 
 }
 
