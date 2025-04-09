@@ -24,7 +24,7 @@ cluster_boot <- function(mx_glm_obj,
   cluster_id <- unique(data$id)
   n_cluster <- length(cluster_id)
 
-  if(n_cluster == length(data$id)) {
+  if(n_cluster >= length(data$id)) {
     stop("No clustering detected.")
   }
 
@@ -39,12 +39,20 @@ cluster_boot <- function(mx_glm_obj,
 
   # model on original data
   # this is not necessary I believe, but it shouldn't add too much runtime
-  orig_model <- glmmTMB(formula = formula, data = data, family = family,
-                        weights = wstar_it)
+  # orig_model <- glmmTMB(formula = formula, data = data, family = family,
+  #                       weights = wstar_it)
+
+  orig_model <- mx_glm_obj
+  class(orig_model) <- 'glmmTMB'
+
   orig_param <- summary(orig_model)$coefficients$cond[, "Estimate"]
   p <- length(orig_param)
   # alternative is to extract the parameter information INCLUDING the rownames
   # of all effects from the mx_glm_obj directly
+
+  # !!!!!!!!
+  # change class of mx_glm_obj to 'glmmTMB' and then use summary!!
+
 
   # initiate bootstrap results matrix
   boot_results <- matrix(NA, nrow = B, ncol = p)

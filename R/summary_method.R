@@ -18,11 +18,11 @@
 # Only works when loaded into the environment?                              ####
 
 summary.mxGlm <- function(object,
-                           B = 999,
-                           seed = NULL,
-                           alpha = 0.05,
-                           show.ci = FALSE,
-                           check.time = TRUE) {
+                          B = 999,
+                          seed = NULL,
+                          alpha = 0.05,
+                          show.ci = FALSE,
+                          check.time = TRUE) {
 
   # Fit cluster bootstrap
   boot_results <- cluster_boot(object, B = B, seed = seed,
@@ -34,6 +34,9 @@ summary.mxGlm <- function(object,
   if (check.time == TRUE) {
     mx_summary$time <- boot_results$time
   }
+
+  # include CI info
+  # if ()
 
   # Show preliminary results
   class(mx_summary) <- 'mxSummary'

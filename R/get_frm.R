@@ -23,8 +23,8 @@ get_frm <- function(frm_original, n_class, reference_group = 1) {
   # check if reference group is realistic
   if (reference_group > n_class) {
     stop(paste0("The reference group (",
-                reference_group
-                ,") exceeds the total number of latent classes"))
+                reference_group,
+                ") exceeds the total number of latent classes"))
   }
 
   # check if ":" or "*" is in formula - if yes stop for now
