@@ -32,9 +32,9 @@ mx_BCH <- function(formula.tmb = NULL,
   data <- get_class_dummies(data = data, post.prob = post.prob)
 
   # Get formula
-  #new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,    ## Was causing error - JE
-  #                       reference_group = reference_group)
-  new_formula <- formula.tmb
+  new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,    ## Was causing error - JE
+                        reference_group = reference_group)
+  # new_formula <- formula.tmb
 
   # Calculate prior probabilities if NULL
   if (is.null(prior.prob)) {
@@ -50,12 +50,16 @@ mx_BCH <- function(formula.tmb = NULL,
   for (t in 1:n_class) {         # iterate over X = t
     for (s in 1:n_class) {       # iterate over W = s
 
-      #                           P(X = t | Y)        *         P(W = s | Y)        /    P(X = t)
-      D[t, s] <- mean(data[, paste0("Cprob", t)] * data[, paste0("class", s)] / prior_probs[t])
+      # Wrong specification of posterior probs vector: specific to modal Cprob1, 2, 3
+      # D[t, s] <- mean(data[, paste0("Cprob", t)] * data[, paste0("class", s)] / prior_probs[t])
+
+      #                  P(X = t | Y)      *         P(W = s | Y)       /    P(X = t)
+      D[t, s] <- mean(data[, post.prob[t]] * data[, paste0("class", s)] / prior_probs[t])
+
     }
   }
   # Solve D matrix
-  weights <- solve(D)             # Should we transpose as well???
+  weights <- solve(D)      # Should we transpose as well??? - Probably, let's check with Dans Code! - HW
 
   # Pivot longer
   data_long <- data[rep(1:nrow(data), each = n_class), ]
