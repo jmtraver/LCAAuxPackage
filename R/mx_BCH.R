@@ -1,7 +1,12 @@
 
 # ---------------------------------- mx_BCH() ----------------------------------
 
-# This function takes
+# This function uses the BCH approach to predict distal outcomes by latent class
+# membership in a glm model framework.
+
+# dependency
+library(glmmTMB)
+
 
 mx_BCH <- function(formula.tmb = NULL,
                    data = NULL,
@@ -33,7 +38,7 @@ mx_BCH <- function(formula.tmb = NULL,
 
   # Get formula
   new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,    ## Was causing error - JE
-                        reference_group = reference_group)
+                         reference_group = reference_group)
   # new_formula <- formula.tmb
 
   # Calculate prior probabilities if NULL
