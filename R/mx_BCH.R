@@ -78,7 +78,7 @@ mx_BCH <- function(formula.tmb = NULL,
 
     # ---- There was an error with matrix*vector multiplication
     # This is why we now expand the weights to have equal dimension to filter_class
-    filter_class <- data_long[data_long$class_new == i, c("class1", "class2", "class3")]
+    filter_class <- data_long[data_long$class_new == i, paste0("class", 1:n_class)]
     repeated_weights <- matrix(rep(weights[i, ], each = NROW(filter_class)),
                                nrow = NROW(filter_class))
 

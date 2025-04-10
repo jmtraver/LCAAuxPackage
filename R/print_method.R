@@ -19,6 +19,11 @@ print.mxSummary <- function(m) {
     print(time_diff)
   }
 
+  if(!is.null(m$conf_int)) {
+    results_ci <- m$conf_int
+    output <- cbind(output, results_ci)
+  }
+
   # Pretty output
   cat("\n")
   print(output)

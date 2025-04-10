@@ -63,12 +63,12 @@ cluster_boot <- function(mx_glm_obj,
 
     # fit model
     boot_model <- glmmTMB::glmmTMB(formula = formula, data = data_boot,
-                                   family = family, weights = w)
+                                   family = family, weights = wstar_it)
     boot_results <- summary(boot_model)$coefficients$cond[, "Estimate"]
     return(boot_results)
   }
   boot_results <- boot::boot(data = data, statistic = boot_fun,
-                             R = 1000, formula = formula, family = gaussian())
+                             R = B, formula = formula, family = gaussian())
 
   # OLD BOOTSTRAP: took longer
   # # initiate bootstrap results matrix

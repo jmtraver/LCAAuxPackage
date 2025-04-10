@@ -35,9 +35,6 @@ summary.mxGlm <- function(object,
     mx_summary$time <- boot_results$time
   }
 
-  # include CI info
-  # if ()
-
   # Show preliminary results
   class(mx_summary) <- 'mxSummary'
 
