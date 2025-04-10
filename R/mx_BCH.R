@@ -70,11 +70,23 @@ mx_BCH <- function(formula.tmb = NULL,
 
   # Save individual weights to each row
   for (i in 1:n_class) {
+    # # For every row that belongs to class_new = i in the column wstar_i
+    # data_long[data_long$class_new == i, "wstar_it"] <-
+    #   # Take the sum of the probabilities in the columns class1, 2 and 3 times their
+    #   # respective weights (= their values in the t(Dstar) matrix)
+    #   rowSums(data_long[data_long$class_new == i, paste0("class", 1:n_class)] * weights[i, ])
+
+    # ---- There was an error with matrix*vector multiplication
+    # This is why we now expand the weights to have equal dimension to filter_class
+    filter_class <- modal_long[modal_long$class_new == i, c("class1", "class2", "class3")]
+    repeated_weights <- matrix(rep(weights[i, ], each = NROW(filter_class)),
+                               nrow = NROW(filter_class))
+
     # For every row that belongs to class_new = i in the column wstar_i
-    data_long[data_long$class_new == i, "wstar_it"] <-
+    modal_long[modal_long$class_new == i, "wstar_it"] <-
       # Take the sum of the probabilities in the columns class1, 2 and 3 times their
       # respective weights (= their values in the t(Dstar) matrix)
-      rowSums(data_long[data_long$class_new == i, paste0("class", 1:n_class)] * weights[i, ])
+      rowSums(filter_class * repeated_weights)
 
   }
   # fit1 <- glmmTMB(formula.tmb, weights = wstar_it, contrasts=NULL, data = data_long)
