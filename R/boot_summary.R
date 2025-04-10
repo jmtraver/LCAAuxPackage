@@ -5,8 +5,10 @@
 
 boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE) {
 
-  boot_coefs <- boot_return$boot_results
+  boot_coefs <- boot_return$boot_results$t    # when using boot to fit the model
   orig_coefs <- boot_return$coefs
+  colnames(boot_coefs) <- names(orig_coefs)
+
 
   boot_means <- colMeans(boot_coefs)               ####
 
