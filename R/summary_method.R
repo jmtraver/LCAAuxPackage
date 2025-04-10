@@ -18,21 +18,33 @@
 # Only works when loaded into the environment?                              ####
 
 summary.mxGlm <- function(object,
+                          do.boot = FALSE,
                           B = 999,
                           seed = NULL,
                           alpha = 0.05,
                           show.ci = FALSE,
                           check.time = TRUE) {
 
-  # Fit cluster bootstrap
-  boot_results <- cluster_boot(object, B = B, seed = seed,
-                               check.time = check.time)
+  if (do.boot == TRUE) {
 
-  # Get summary results
-  mx_summary <- boot_summary(boot_results, alpha = alpha, ci = show.ci)
+    # Fit cluster bootstrap
+    boot_results <- cluster_boot(object, B = B, seed = seed,
+                                 check.time = check.time)
+    # Get summary results
+    mx_summary <- boot_summary(boot_results, alpha = alpha, ci = show.ci)
 
-  if (check.time == TRUE) {
+  } else if (do.boot == FALSE) {
+
+    class(object) <- 'glmmTMB'
+
+    # Get summary results
+    mx_summary <- glmmTMB_summary(object, alpha = alpha, ci = show.ci)
+  }
+
+  if (check.time == TRUE & do.boot == TRUE) {
     mx_summary$time <- boot_results$time
+  } else if (check.time == TRUE & do.boot == FALSE) {
+    warning("'check.time' only returned for 'do.boot' = TRUE")
   }
 
   # Show preliminary results
@@ -42,4 +54,42 @@ summary.mxGlm <- function(object,
   return(mx_summary)
 
 }
+
+
+
+# summary.mxGlm <- function(object,
+#                           do.boot = FALSE,
+#                           B = 999,
+#                           seed = NULL,
+#                           alpha = 0.05,
+#                           show.ci = FALSE,
+#                           check.time = TRUE) {
+#
+#   if (do.boot == TRUE) {
+#
+#     # Fit cluster bootstrap
+#     boot_results <- cluster_boot(object, B = B, seed = seed,
+#                                  check.time = check.time)
+#     # Get summary results
+#     mx_summary <- boot_summary(boot_results, alpha = alpha, ci = show.ci)
+#
+#   } else if (do.boot == FALSE) {
+#
+#     # Get summary results
+#     mx_summary <- glmmTMB_summary(object, alpha = alpha, ci = show.ci)
+#   }
+#
+#   if (check.time == TRUE & do.boot == TRUE) {
+#     mx_summary$time <- boot_results$time
+#   } else if (check.time == TRUE & do.boot == FALSE) {
+#     warning("'check.time' only returned for 'do.boot' = TRUE")
+#   }
+#
+#   # Show preliminary results
+#   class(mx_summary) <- 'mxSummary'
+#
+#   # print(mx_summary$coefficients)
+#   return(mx_summary)
+#
+# }
 

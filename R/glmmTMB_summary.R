@@ -5,7 +5,10 @@
 
 glmmTMB_summary <- function(glmmTMB_obj, alpha = 0.05, ci = TRUE) {
 
-  results <- data.frame(summary(glmmTMB_obj)$coefficients$cond)
+  summary_res <- summary(glmmTMB_obj)
+
+  results <- data.frame(summary_res$coefficients$cond,
+                        check.names = FALSE)
 
   orig_coefs <- results[, 1]
   orig_se <- results[, 2]
