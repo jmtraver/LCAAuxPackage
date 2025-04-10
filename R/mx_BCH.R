@@ -55,9 +55,6 @@ mx_BCH <- function(formula.tmb = NULL,
   for (t in 1:n_class) {         # iterate over X = t
     for (s in 1:n_class) {       # iterate over W = s
 
-      # Wrong specification of posterior probs vector: specific to modal Cprob1, 2, 3
-      # D[t, s] <- mean(data[, paste0("Cprob", t)] * data[, paste0("class", s)] / prior_probs[t])
-
       #                  P(X = t | Y)      *         P(W = s | Y)       /    P(X = t)
       D[t, s] <- mean(data[, post.prob[t]] * data[, paste0("class", s)] / prior_probs[t])
 
@@ -67,6 +64,7 @@ mx_BCH <- function(formula.tmb = NULL,
   weights <- solve(D)      # Should we transpose as well??? - Probably, let's check with Dans Code! - HW
 
   # Pivot longer
+  # Pivoting with rep() is necessary to recognize clustering in the rownames
   data_long <- data[rep(1:nrow(data), each = n_class), ]
   data_long$class_new <- rep(1:n_class, times = nrow(data))
 
