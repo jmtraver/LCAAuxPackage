@@ -10,11 +10,11 @@
 ## in other data/models!
 
 
-
-#T <- length(unique(data_long$Class))
-#y <- data_long$Alc12
-#w <- data_long$wstar_it
-#class_vec <- data_long$Class
+# Set values for the loglik fx
+T <- length(unique(data_long$Class))
+y <- data_long$Alc12
+w <- data_long$wstar_it
+class_vec <- data_long$Class
 
 loglik_distal <- function(params) {
   mu <- params[1:T]
@@ -27,56 +27,59 @@ loglik_distal <- function(params) {
   # Predicted mean for each row in the long-format data
   mu_i <- mu[as.integer(data_long$class)]  # Ensure proper indexing
 
-  # Check for any bad values
+  # Check for any bad values, replace with very large number
   if (any(!is.finite(mu_i))) return(1e10)
   if (any(!is.finite(data_long$Alc12))) return(1e10)
 
   # Compute weighted log-likelihood
+  ## Log-likelihood of each value of Y, given mean mu and sd sigma
   ll_vec <- dnorm(data_long$Alc12, mean = mu_i, sd = sigma, log = TRUE)
+  ## Return large value for bad observations
   if (any(!is.finite(ll_vec))) return(1e10)
-
-  ll <- sum(w * ll_vec)  # Use 'w' here instead of 'w_star' if needed
-  return(-ll)  # we minimize
+  ## Weight each loglik with wstar_it
+  ll <- sum(w * ll_vec)
+  ## Minimize for optim
+  return(-ll)
 }
 
 ### Informed initialization:
 # Calculate initial values for mu based on class means
-#class_means <- tapply(data_long$Alc12, data_long$Class, mean, na.rm = TRUE)
-#class_stddevs <- tapply(data_long$Alc12, data_long$Class, sd, na.rm = TRUE)
+class_means <- tapply(data_long$Alc12, data_long$Class, mean, na.rm = TRUE)
+class_stddevs <- tapply(data_long$Alc12, data_long$Class, sd, na.rm = TRUE)
 
 # Initialize mu as the class means
-#mu_init <- class_means
-# Add small random perturbation to initial values
+mu_init <- class_means
+
+## OR add small random perturbation to initial values
 #set.seed(123)  # For reproducibility
 #mu_init <- mu_init + rnorm(T, mean = 0, sd = 0.5)  # Adjust the sd as needed
 
-
 # Initialize sigma as the overall standard deviation of Alc12
-#sigma_init <- sd(data_long$Alc12, na.rm = TRUE)
+sigma_init <- sd(data_long$Alc12, na.rm = TRUE)
 
 # Log-transform the initial sigma (since the parameter sigma is log-transformed)
-#log_sigma_init <- log(sigma_init)
+log_sigma_init <- log(sigma_init)
 
 # Combine into a single vector for initial parameters
-#init <- c(mu_init, log_sigma_init)
+init <- c(mu_init, log_sigma_init)
 
-### Basic intialization
+### OR JUST USE-- Basic intialization, no information
 #init <- c(rep(mean(data_long$Alc12, na.rm = TRUE), T), log(1))
 
 # Maximize log-likelihood
-#fit <- optim(init, loglik_distal, method = "BFGS", control = list(maxit = 1000), hessian=TRUE)
+fit <- optim(init, loglik_distal, method = "BFGS", control = list(maxit = 1000), hessian=TRUE)
 
 # Extract results
-#mu_hat <- fit$par[1:T]
-#sigma_hat <- exp(fit$par[T + 1])
+mu_hat <- fit$par[1:T]
+sigma_hat <- exp(fit$par[T + 1])
 
-#cat("Estimated class means (mu_t):\n")
-#print(mu_hat)
-#cat("Estimated residual SD (sigma):", sigma_hat, "\n")
+cat("Estimated class means (mu_t):\n")
+print(mu_hat)
+cat("Estimated residual SD (sigma):", sigma_hat, "\n")
 
-################# Singular, cant use
+################# Singular, cant use (way to fix this?)
 # Calculate Hessian for Sandwich Estimator
-#hessian_matrix <- fit$hessian
-#if (any(abs(eigen(hessian_matrix)$values)<1e-6)) {
-#  warning("The Hessian matrix is singular or near-singular. There is potentially an issue with the model or data.\n")
-#}
+hessian_matrix <- fit$hessian
+if (any(abs(eigen(hessian_matrix)$values)<1e-6)) {
+  warning("The Hessian matrix is singular or near-singular. There is potentially an issue with the model or data.\n")
+}
