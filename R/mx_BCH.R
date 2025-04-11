@@ -4,10 +4,6 @@
 # This function uses the BCH approach to predict distal outcomes by latent class
 # membership in a glm model framework.
 
-# dependency
-library(glmmTMB)
-
-
 mx_BCH <- function(formula.tmb = NULL,
                    data = NULL,
                    post.prob = NULL,
@@ -37,9 +33,10 @@ mx_BCH <- function(formula.tmb = NULL,
   data <- get_class_dummies(data = data, post.prob = post.prob)
 
   # Get formula
-  new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,    ## Was causing error - JE
-                         reference_group = reference_group)
-  # new_formula <- formula.tmb
+  #new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,    ## Was causing error - JE
+  #                       reference_group = reference_group)
+  #new_formula <- formula.tmb
+  frm <- formula.tmb
 
   # Calculate prior probabilities if NULL
   if (is.null(prior.prob)) {
@@ -90,14 +87,27 @@ mx_BCH <- function(formula.tmb = NULL,
 
   }
   # fit1 <- glmmTMB(formula.tmb, weights = wstar_it, contrasts=NULL, data = data_long)
+  oc <- as.character(frm[2])
+  czv <- as.character(frm[3])
 
-  fit1 <- glmmTMB(new_formula,
-                  weights = wstar_it,
-                  # contrasts = NULL,
-                  data = data_long,
-                  family = family)
+  fit1 <- mxBCHfit(T = n_class, w = data_long$wstar_it, y= data_long[[oc]], cls = data_long[[czv]])
+
+  #fit1 <- glmmTMB(new_formula,
+  #                weights = wstar_it,
+  #                # contrasts = NULL,
+  #                data = data_long,
+  #                family = family)
 
   # class(fit1) <- 'mxGlm'
 
   return(fit1)
 }
+
+
+# Extract results
+#mu_hat <- fit1$par[1:n_class]
+#sigma_hat <- exp(fit1$par[n_class + 1])
+
+#cat("Estimated class means (mu_t):\n")
+#print(mu_hat)
+#cat("Estimated residual SD (sigma):", sigma_hat, "\n")
