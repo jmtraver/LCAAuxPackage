@@ -36,7 +36,7 @@ summary.mxGlm <- function(object,
   } else if (do.boot == FALSE) {
 
     # Get summary results
-    mx_summary <- mxGLM_summary(object, alpha = alpha, ci = show.ci)
+    mx_summary <- mxGlm_summary(object, alpha = alpha, ci = show.ci)
 
   }
 
