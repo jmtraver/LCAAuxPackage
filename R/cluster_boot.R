@@ -7,7 +7,7 @@
 library(dplyr)
 library(boot)
 
-cluster_boot <- function(mx_glm_obj,
+cluster_boot <- function(mxGlm_obj,
                          B = 999,
                          seed = NULL,
                          check.time = TRUE) {
@@ -15,7 +15,7 @@ cluster_boot <- function(mx_glm_obj,
   time_1 <- Sys.time()
 
   # get data from model
-  data <- mx_glm_obj$frame
+  data <- mxGlm_obj$frame
   row_names <- rownames(data)
   data$id <- floor(as.numeric(row_names))
   # copy weights column to usable name
@@ -30,16 +30,16 @@ cluster_boot <- function(mx_glm_obj,
   }
 
   # get function call, formula and family from model
-  fun_call <- mx_glm_obj$call
-  formula <- mx_glm_obj$call$formula
-  family <- mx_glm_obj$modelInfo$family$family
+  fun_call <- mxGlm_obj$call
+  formula <- mxGlm_obj$call$formula
+  family <- mxGlm_obj$modelInfo$family$family
 
-  # how to incooporate link info?  mx_glm_obj$modelInfo$family$link        #####
+  # how to incooporate link info?  mxGlm_obj$modelInfo$family$link        #####
 
   set.seed(seed)
 
   # model on original data
-  orig_model <- mx_glm_obj
+  orig_model <- mxGlm_obj
   class(orig_model) <- 'glmmTMB'
   orig_param <- summary(orig_model)$coefficients$cond[, "Estimate"]
   p <- length(orig_param)
