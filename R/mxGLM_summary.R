@@ -1,16 +1,16 @@
 
-# ------------------------------ mxGLM_summary() -------------------------------
+# ------------------------------ mxGlm_summary() -------------------------------
 
-mxGLM_summary <- function(mxGLM_return, alpha = 0.05, ci = TRUE) {
+mxGlm_summary <- function(mxGlm_obj, alpha = 0.05, ci = TRUE) {
 
-  if (class(mxGLM_return) != 'mxGlm') {
+  if (class(mxGlm_obj) != 'mxGlm') {
     stop(paste0("mxGLM_summary not usable on object of class '",
-                class(mxGLM_return), "'."))
+                class(mxGlm_obj), "'."))
   }
 
   # Extract coefficients
-  coefs <- mxGLM_return$par[-length(mxGLM_return$par)]
-  names(coefs) <- mxGLM_return$class_names
+  coefs <- mxGlm_obj$par[-length(mxGlm_obj$par)]
+  names(coefs) <- mxGlm_obj$class_names
 
   # Get standard errors - NOT IMPLEMENTED YET
   se <- rep(NA, times = length(coefs))
