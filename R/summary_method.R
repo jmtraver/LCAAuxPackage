@@ -35,10 +35,9 @@ summary.mxGlm <- function(object,
 
   } else if (do.boot == FALSE) {
 
-    class(object) <- 'glmmTMB'
-
     # Get summary results
-    mx_summary <- glmmTMB_summary(object, alpha = alpha, ci = show.ci)
+    mx_summary <- mxGLM_summary(object, alpha = alpha, ci = show.ci)
+
   }
 
   if (check.time == TRUE & do.boot == TRUE) {
