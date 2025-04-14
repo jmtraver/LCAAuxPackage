@@ -69,5 +69,11 @@ init <- c(mu_init, log_sigma_init)
 
 # Maximize log-likelihood
 fit <- optim(init, loglik_distal, method = "BFGS", control = list(maxit = 1000), hessian=TRUE)
+
+# append information about outcome, classes etc
+fit$y <- y
+fit$class_names <- paste0("class", 1:n_class)
+fit$class_vec <- class_vec
+
 return(fit)
 }

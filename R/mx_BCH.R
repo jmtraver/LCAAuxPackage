@@ -103,7 +103,7 @@ mx_BCH <- function(formula.tmb = NULL,
   #                data = data_long,
   #                family = family)
 
-  # class(fit1) <- 'mxGlm'
+  class(fit1) <- 'mxGlm'
 
   return(fit1)
 }
