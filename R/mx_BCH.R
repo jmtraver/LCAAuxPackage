@@ -29,16 +29,18 @@ mx_BCH <- function(formula.tmb = NULL,
   # Initialize values
   n_class <- length(post.prob)
 
+  # Gets dummy variables modal class assignment
+  data <- get_class_dummies(data = data, post.prob = post.prob)
   # Get modal class assignment
-  # data <- get_class_dummies(data = data, post.prob = post.prob)
   data <- assigned_class(data = data, post.prob = post.prob)
 
 
   # Get formula
-  #new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,
-  #                       reference_group = reference_group)
+  new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,
+                         reference_group = reference_group)
   #new_formula <- formula.tmb
-  frm <- formula.tmb
+  # frm <- formula.tmb
+  frm <- new_formula
 
   # Calculate prior probabilities if NULL
   if (is.null(prior.prob)) {
@@ -92,7 +94,8 @@ mx_BCH <- function(formula.tmb = NULL,
   oc <- as.character(frm[2])
   czv <- as.character(frm[3])
 
-  fit1 <- mxBCHfit(T = n_class, w = data_long$wstar_it, y= data_long[[oc]], cls = data_long[[czv]])
+  fit1 <- mxBCHfit(n_class = n_class, w = data_long$wstar_it, y= data_long[[oc]],
+                   cls = data_long[[czv]])
 
   #fit1 <- glmmTMB(new_formula,
   #                weights = wstar_it,
