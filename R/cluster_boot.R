@@ -14,15 +14,14 @@ cluster_boot <- function(mxGlm_obj,
 
   time_1 <- Sys.time()
 
+  # Initialize data
   y <- mxGlm_obj$y
   class_vec <- mxGlm_obj$class_vec
-
-  # # get data from model
-  # data <- mxGlm_obj$frame
-  # row_names <- rownames(data)
-  # data$id <- floor(as.numeric(row_names))
-  # # copy weights column to usable name
-  # data$wstar_it <- data[, "(weights)"]
+  wstar_it <- mxGlm_obj$weights
+  n_class <- length(mxGlm_obj$class_names)
+  data <- mxGlm_obj$data
+  row_names <- rownames(data)
+  data$id <- floor(as.numeric(row_names))
 
   # get cluster ids
   cluster_id <- unique(data$id)
@@ -32,19 +31,23 @@ cluster_boot <- function(mxGlm_obj,
     stop("No clustering detected.")
   }
 
-  # get function call, formula and family from model
-  fun_call <- mxGlm_obj$call
-  formula <- mxGlm_obj$call$formula
-  family <- mxGlm_obj$modelInfo$family$family
+  # # get function call, formula and family from model
+  # fun_call <- mxGlm_obj$call
+  # formula <- mxGlm_obj$call$formula
+  # family <- mxGlm_obj$modelInfo$family$family
 
   # how to incooporate link info?  mxGlm_obj$modelInfo$family$link        #####
 
   set.seed(seed)
 
   # model on original data
-  orig_model <- mxGlm_obj
-  class(orig_model) <- 'glmmTMB'
-  orig_param <- summary(orig_model)$coefficients$cond[, "Estimate"]
+  # orig_model <- mxGlm_obj
+  # class(orig_model) <- 'glmmTMB'
+  # orig_param <- summary(orig_model)$coefficients$cond[, "Estimate"]
+  # p <- length(orig_param)
+
+  orig_param <- mxGlm_obj$par
+  names(orig_param) <- c(mxGlm_obj$class_names, "sigma_maybe")
   p <- length(orig_param)
 
 
@@ -65,13 +68,23 @@ cluster_boot <- function(mxGlm_obj,
 
 
     # fit model
-    boot_model <- glmmTMB::glmmTMB(formula = formula, data = data_boot,
-                                   family = family, weights = wstar_it)
-    boot_results <- summary(boot_model)$coefficients$cond[, "Estimate"]
+    # boot_model <- glmmTMB::glmmTMB(formula = formula, data = data_boot,
+    #                                family = family, weights = wstar_it)
+
+    # fit model
+    boot_model <- mxBCHfit(n_class = n_class, w = wstar_it, y = y,
+                           cls = class_vec)
+
+    boot_results <- boot_model$par
     return(boot_results)
   }
+
+
   boot_results <- boot::boot(data = data, statistic = boot_fun,
-                             R = B, formula = formula, family = gaussian())
+                             R = B,
+                             #formula = formula,
+                             #family = gaussian()
+                             )
 
   # OLD BOOTSTRAP: took longer
   # # initiate bootstrap results matrix
@@ -100,7 +113,7 @@ cluster_boot <- function(mxGlm_obj,
   boot_return <- list(
     boot_results = boot_results,
     coefs = orig_param,
-    formula = formula,
+    # formula = formula,
     B = B,
     family = family
   )

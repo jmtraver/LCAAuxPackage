@@ -97,6 +97,9 @@ mx_BCH <- function(formula.tmb = NULL,
   fit1 <- mxBCHfit(n_class = n_class, w = data_long$wstar_it, y= data_long[[oc]],
                    cls = data_long[[czv]])
 
+  # append long format data file to return list
+  fit1$data <- data_long
+
   #fit1 <- glmmTMB(new_formula,
   #                weights = wstar_it,
   #                # contrasts = NULL,
