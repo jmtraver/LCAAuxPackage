@@ -45,8 +45,8 @@ loglik_distal <- function(params, outcome = y, cv = class_vec) {
 
 ### Informed initialization:
 # Calculate initial values for mu based on class means
-class_means <- tapply(y, cls, mean, na.rm = TRUE)
-class_stddevs <- tapply(y, cls, sd, na.rm = TRUE)
+class_means <- tapply(y, class_vec, mean, na.rm = TRUE)
+class_stddevs <- tapply(y, class_vec, sd, na.rm = TRUE)
 
 # Initialize mu as the class means
 mu_init <- class_means

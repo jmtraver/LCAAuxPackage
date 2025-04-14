@@ -14,12 +14,15 @@ cluster_boot <- function(mxGlm_obj,
 
   time_1 <- Sys.time()
 
-  # get data from model
-  data <- mxGlm_obj$frame
-  row_names <- rownames(data)
-  data$id <- floor(as.numeric(row_names))
-  # copy weights column to usable name
-  data$wstar_it <- data[, "(weights)"]
+  y <- mxGlm_obj$y
+  class_vec <- mxGlm_obj$class_vec
+
+  # # get data from model
+  # data <- mxGlm_obj$frame
+  # row_names <- rownames(data)
+  # data$id <- floor(as.numeric(row_names))
+  # # copy weights column to usable name
+  # data$wstar_it <- data[, "(weights)"]
 
   # get cluster ids
   cluster_id <- unique(data$id)
