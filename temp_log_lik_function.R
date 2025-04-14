@@ -83,3 +83,39 @@ hessian_matrix <- fit$hessian
 if (any(abs(eigen(hessian_matrix)$values)<1e-6)) {
   warning("The Hessian matrix is singular or near-singular. There is potentially an issue with the model or data.\n")
 }
+
+###################################################### Any?
+n_class <- 3
+y <- Alc12
+w <- wstar_it
+class_vec <- dat$Class
+dm <- dat$Math98:dat$RComp98
+
+loglik_distal <- function(params, outcome = y, cv = class_vec, dm) {
+  mu <- params[1:n_class]
+  log_sigma <- params[n_class + 1]
+  sigma <- exp(log_sigma)
+  n_preds <- ncol(dm)
+  beta <- params[(n_class + 1):(n_class + n_preds)]
+
+  # Safety: if sigma is too small or non-finite, return large value
+  if (!is.finite(sigma) || sigma <= 1e-6) return(1e10)
+
+  # Predicted mean for each row in the long-format data
+  mu_i <- mu[as.integer(cv)]  # Ensure proper indexing
+  lin <- mu_i + dm %*% beta
+
+  # Check for any bad values, replace with very large number
+  if (any(!is.finite(mu_i))) return(1e10)
+  if (any(!is.finite(y))) return(1e10)
+
+  # Compute weighted log-likelihood
+  ## Log-likelihood of each value of Y, given mean mu and sd sigma
+  ll_vec <- dnorm(y, mean = lin, sd = sigma, log = TRUE)
+  ## Return large value for bad observations
+  if (any(!is.finite(ll_vec))) return(1e10)
+  ## Weight each loglik with wstar_it
+  ll <- sum(w * ll_vec)
+  ## Minimize for optim
+  return(-ll)
+}
