@@ -99,6 +99,7 @@ mx_BCH <- function(formula.tmb = NULL,
 
   # append long format data file to return list
   fit1$data <- data_long
+  fit1$formula <- frm
 
   #fit1 <- glmmTMB(new_formula,
   #                weights = wstar_it,

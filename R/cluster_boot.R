@@ -23,6 +23,12 @@ cluster_boot <- function(mxGlm_obj,
   row_names <- rownames(data)
   data$id <- floor(as.numeric(row_names))
 
+  # get formula
+  frm <- mxGlm_obj$formula
+  # name for outcome and class variable
+  oc <- as.character(frm[2])
+  czv <- as.character(frm[3])
+
   # get cluster ids
   cluster_id <- unique(data$id)
   n_cluster <- length(cluster_id)
@@ -66,14 +72,13 @@ cluster_boot <- function(mxGlm_obj,
       subset_rows[rep(1:nrow(subset_rows), times = id_counts[i]), ]
     }))
 
-
     # fit model
     # boot_model <- glmmTMB::glmmTMB(formula = formula, data = data_boot,
     #                                family = family, weights = wstar_it)
 
     # fit model
-    boot_model <- mxBCHfit(n_class = n_class, w = wstar_it, y = y,
-                           cls = class_vec)
+    boot_model <- mxBCHfit(n_class = n_class, w = data_boot$wstar_it,
+                           y = data_boot[[oc]], cls = data_boot[[czv]])
 
     boot_results <- boot_model$par
     return(boot_results)
