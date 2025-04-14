@@ -43,9 +43,12 @@ get_frm <- function(frm_original, n_class, reference_group = 1) {
   # extract other predictor(s) that are not latent_class
   other_preds <- stringr::str_split(pred_info, "latent_class")[[1]]
 
-  # create dummies for latent class
-  class_numbers <- (1:n_class)[-reference_group]
-  classes <- paste0("class", class_numbers, collapse = " + ")
+  # # create dummies for latent class
+  # class_numbers <- (1:n_class)[-reference_group]
+  # classes <- paste0("class", class_numbers, collapse = " + ")
+
+  # rename latent_class to modal assigned class
+  classes <- "ass_class"
 
   # paste predictors back together with class dummies
   new_preds <- paste0(other_preds[1], classes, other_preds[2])
