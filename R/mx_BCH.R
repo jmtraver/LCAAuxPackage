@@ -30,7 +30,9 @@ mx_BCH <- function(formula.tmb = NULL,
   n_class <- length(post.prob)
 
   # Get modal class assignment
-  data <- get_class_dummies(data = data, post.prob = post.prob)
+  # data <- get_class_dummies(data = data, post.prob = post.prob)
+  data <- assigned_class(data = data, post.prob = post.prob)
+
 
   # Get formula
   #new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,
