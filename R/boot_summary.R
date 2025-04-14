@@ -3,7 +3,8 @@
 
 # ...description...
 
-boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE) {
+boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE,
+                         mean.diff = TRUE) {
 
   boot_coefs <- boot_return$boot_results$t    # when using boot to fit the model
   orig_coefs <- boot_return$coefs
@@ -41,6 +42,30 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE) {
                              `UL` = UL)
 
     summary_return$conf_int <- results_ci
+  }
+
+
+  if (mean.diff == TRUE) {
+
+    # number of classes
+    n_class <- length(orig_coefs) - 1
+    # set up all pair comparisons
+    all_comp <- combn(1:n_class, 2)
+    # number of comparisons
+    n_comp <- NCOL(all_comp)
+    # make data frame
+    boot_coefs <- data.frame(boot_coefs)
+    colnames(boot_coefs) <- names(orig_coefs)
+
+    for (comp in 1:n_comp) {
+      c1 <- paste0("class", all_comp[1, comp])
+      c2 <- paste0("class", all_comp[2, comp])
+      mean_comparison <- paste0(c1, "_", c2)
+      boot_coefs[[mean_comparison]] <- (boot_coefs[, c1] - boot_coefs[, c2])
+    }
+
+    # MISSING summarize results for mean comparisons!
+
   }
 
   return(summary_return)
