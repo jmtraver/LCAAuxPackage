@@ -33,7 +33,7 @@ mx_BCH <- function(formula.tmb = NULL,
   data <- get_class_dummies(data = data, post.prob = post.prob)
 
   # Get formula
-  #new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,    ## Was causing error - JE
+  #new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,
   #                       reference_group = reference_group)
   #new_formula <- formula.tmb
   frm <- formula.tmb

@@ -1,25 +1,25 @@
 # ~-~-~-~-~-~-~-~-~-~-~- loglik distal outcome function -~-~-~-~-~-~-~-~-~-~-~-#
 
 
-mxBCHfit <- function(T = n_class,
+mxBCHfit <- function(n_class = n_class,
                      y = outcome,
                      w = data_long$wstar_it,
                      cls) {
 
 
 # Set values for the loglik fx
-#T <- length(unique(data_long$Class))
+#n_class <- length(unique(data_long$Class))
 #y <- data_long$Alc12
 #w <- data_long$wstar_it
 #class_vec <- data_long$Class
-T <- T
+n_class <- n_class
 y <- y
 w <- w
 class_vec <- cls
 
 loglik_distal <- function(params, outcome = y, cv = class_vec) {
-  mu <- params[1:T]
-  log_sigma <- params[T + 1]
+  mu <- params[1:n_class]
+  log_sigma <- params[n_class + 1]
   sigma <- exp(log_sigma)
 
   # Safety: if sigma is too small or non-finite, return large value
@@ -53,7 +53,7 @@ mu_init <- class_means
 
 ## OR add small random perturbation to initial values
 #set.seed(123)  # For reproducibility
-#mu_init <- mu_init + rnorm(T, mean = 0, sd = 0.5)  # Adjust the sd as needed
+#mu_init <- mu_init + rnorm(n_class, mean = 0, sd = 0.5)  # Adjust the sd as needed
 
 # Initialize sigma as the overall standard deviation of Alc12
 sigma_init <- sd(y, na.rm = TRUE)
@@ -65,7 +65,7 @@ log_sigma_init <- log(sigma_init)
 init <- c(mu_init, log_sigma_init)
 
 ### OR JUST USE-- Basic intialization, no information
-#init <- c(rep(mean(data_long$Alc12, na.rm = TRUE), T), log(1))
+#init <- c(rep(mean(data_long$Alc12, na.rm = TRUE), n_class), log(1))
 
 # Maximize log-likelihood
 fit <- optim(init, loglik_distal, method = "BFGS", control = list(maxit = 1000), hessian=TRUE)
