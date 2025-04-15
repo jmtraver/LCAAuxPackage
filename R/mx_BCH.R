@@ -52,6 +52,9 @@ mx_BCH <- function(formula.tmb = NULL,
     stop("mx_BCH Error: post.prob cannot be NULL. Indicate a list of class probability columns.")
   }
 
+  # Force data to be a dataframe
+  data <- data.frame(data)
+
   # Initialize values
   n_class <- length(post.prob)
 
