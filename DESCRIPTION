@@ -1,6 +1,6 @@
 Package: LCAAux
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Latent Class Analysis with Auxillary Variables
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
