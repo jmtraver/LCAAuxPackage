@@ -10,7 +10,10 @@
 library(shiny)
 library(bslib)
 library(stats)
-library(ggplot2)
+if (!requireNamespace("naniar", quietly = TRUE)) {
+  install.packages("naniar")
+}
+library(naniar)
 
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "cerulean"),
@@ -36,8 +39,8 @@ ui <- fluidPage(
       h4("Regression Output"),
       verbatimTextOutput("regression_summary"),
       br(),
-      h4("Means Across Latent Classes"),
-      plotOutput("col_plot"),
+      h4("Missing Data Plot"),
+      plotOutput("missing_plot")
     )
   )
 )
@@ -96,6 +99,14 @@ server <- function(input, output, session) {
       return()
     }
 
+    observeEvent(input$submit_btn, {
+      output$missing_plot <- renderPlot({
+        df <- data_reactive()
+        selectVars <- unique(c(input$dep_var, input$indep_vars, input$prob_vars))
+        filteredDF <- df[,selectVars,drop=FALSE]
+        vis_miss(filteredDF)
+    })})
+
     # Fit model
     formula_str <- paste(input$dep_var, "~", paste(input$indep_vars, collapse = " + "), " + ",
                            paste(input$prob_vars, collapse = " + "))
@@ -123,9 +134,6 @@ server <- function(input, output, session) {
     summary(values$model)
   })
 
-  output$col_plot <- renderPlot({
-    req(input$dep_var, input$prob_vars)
-  })
 
 }
 
