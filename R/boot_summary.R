@@ -100,7 +100,7 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE,
       # results_ci <- data.frame(`LL` = LL,
       #                          `UL` = UL)
       results_diff$LL <- LL
-      results_diff$UL <- LL
+      results_diff$UL <- UL
 
       # summary_return$conf_int <- results_ci
     }
