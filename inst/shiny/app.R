@@ -104,7 +104,15 @@ server <- function(input, output, session) {
         df <- data_reactive()
         selectVars <- unique(c(input$dep_var, input$indep_vars, input$prob_vars))
         filteredDF <- df[,selectVars,drop=FALSE]
-        vis_miss(filteredDF)
+        vis_miss(filteredDF)+ theme(
+          axis.text.x = element_text(size = 14, angle = 45, hjust = 0),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 16),
+          plot.title = element_text(size = 18, face = "bold"),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 16)
+        )
+
     })})
 
     # Fit model
