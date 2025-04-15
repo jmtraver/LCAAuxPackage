@@ -1,6 +1,6 @@
 
-# ---------------------------- print.mx_summary()  -----------------------------
-
+# ---------------------------- print.mxSummary()  -----------------------------
+#'@param m object of class mxSummary
 #'@method print mx_summary
 #'@export
 
