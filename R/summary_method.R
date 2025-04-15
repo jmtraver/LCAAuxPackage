@@ -1,5 +1,16 @@
 
-# ------------------------------ summary.mx_glm() ------------------------------
+# ------------------------------ summary.mxGlm() ------------------------------
+#'@param object object of class mxGlm
+#'@param do.boot logical. do a bootstrap for inference (default = FALSE)
+#'@param B number of drawn bootstrap samples (default = 999)
+#'@param seed set a seed for the bootstrap
+#'@param alpha set alpha value for type I error (default = 0.05)
+#'@param show.ci logical. Output a confidence interval for 1 - alpha (default = FALSE)
+#'@param check.time logical. Output the time it takes to run bootstrap (only available for bootstrap)
+#'@param mean.diff logical. Output the mean differences in the outcome variable depending on class membership
+
+#'@method summary mxGlm
+#'@export
 
 ## idea set up:
 # - default class of mx_BCH is mx_glm, but people can manually set the class to

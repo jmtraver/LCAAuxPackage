@@ -1,5 +1,8 @@
 
-# ---------------------------- print.mx_summary()  -----------------------------
+# ---------------------------- print.mxSummary()  -----------------------------
+#'@param m object of class mxSummary
+#'@method print mx_summary
+#'@export
 
 ## idea:
 # - this should print whatever we want the user to see when they call our
