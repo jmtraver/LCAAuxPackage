@@ -1,5 +1,6 @@
 
 # ------------------------------ assigned_class() ------------------------------
+#' @export
 
 # This function creates a new data.frame that includes the modal class
 # assignment dummy variables

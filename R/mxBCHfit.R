@@ -1,4 +1,5 @@
 # ~-~-~-~-~-~-~-~-~-~-~- loglik distal outcome function -~-~-~-~-~-~-~-~-~-~-~-#
+#' @export
 
 
 mxBCHfit <- function(n_class = n_class,
