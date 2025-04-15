@@ -31,6 +31,7 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE,
                          alpha = alpha,
                          ci = ci,
                          boot_means = boot_means,
+                         B = boot_return$B,
                          check.names = FALSE)
 
   if (ci == TRUE) {
@@ -57,17 +58,56 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE,
     boot_coefs <- data.frame(boot_coefs)
     colnames(boot_coefs) <- names(orig_coefs)
 
+    all_mean_comp <- vector(length = n_comp)
+    orig_diffs <- vector(length = n_comp)
+
     for (comp in 1:n_comp) {
       c1 <- paste0("class", all_comp[1, comp])
       c2 <- paste0("class", all_comp[2, comp])
       mean_comparison <- paste0(c1, "_", c2)
+
+      # mean differences original
+      orig_diffs[comp] <- orig_coefs[c1] - orig_coefs[c2]
+
+      # mean differences bootstrap
+      all_mean_comp[comp] <- mean_comparison
       boot_coefs[[mean_comparison]] <- (boot_coefs[, c1] - boot_coefs[, c2])
     }
+    # name original mean difference
+    names(orig_diffs) <- all_mean_comp
 
-    # MISSING summarize results for mean comparisons!
+    # bootstrap mean difference dataframe
+    mean_diffs <- boot_coefs[, all_mean_comp, drop = FALSE]
+
+    # compute bootstrap SE
+    diff_se <- apply(mean_diffs, 2, sd)
+    # compute test statistic
+    z_emp <- orig_diffs/diff_se
+    # get p value
+    p_val <- 2*pnorm(abs(z_emp), lower.tail = FALSE)
+
+    results_diff <- data.frame(`Estimate` = orig_diffs,
+                               `Std. Error` = diff_se,
+                               `z value` = z_emp,
+                               `Pr(>|z|)` = p_val,
+                                check.names = FALSE)
+
+    if (ci == TRUE) {
+      z_crit <- qnorm(1 - alpha/2)
+      LL <- orig_diffs - z_crit*diff_se
+      UL <- orig_diffs + z_crit*diff_se
+
+      # results_ci <- data.frame(`LL` = LL,
+      #                          `UL` = UL)
+      results_diff$LL <- LL
+      results_diff$UL <- LL
+
+      # summary_return$conf_int <- results_ci
+    }
+
+    summary_return$difference <- results_diff
 
   }
-
   return(summary_return)
 }
 

@@ -23,15 +23,34 @@ summary.mxGlm <- function(object,
                           seed = NULL,
                           alpha = 0.05,
                           show.ci = FALSE,
-                          check.time = TRUE) {
+                          check.time = FALSE,
+                          mean.diff = FALSE) {
+
+
+  if (mean.diff == TRUE & do.boot == FALSE) {
+    warning("'mean.diff' only available for 'do.boot' = TRUE.")
+    mean.diff <- FALSE
+  }
+  if (check.time == TRUE & do.boot == FALSE) {
+    warning("'check.time' only returned for 'do.boot' = TRUE")
+  }
+  # if (check.time == TRUE & do.boot == TRUE) {
+  #   mx_summary$time <- boot_results$time
+  # } else if (check.time == TRUE & do.boot == FALSE) {
+  #   warning("'check.time' only returned for 'do.boot' = TRUE")
+  # }
 
   if (do.boot == TRUE) {
+
+    check.time <- TRUE
+    mean.diff <- TRUE
 
     # Fit cluster bootstrap
     boot_results <- cluster_boot(object, B = B, seed = seed,
                                  check.time = check.time)
     # Get summary results
-    mx_summary <- boot_summary(boot_results, alpha = alpha, ci = show.ci)
+    mx_summary <- boot_summary(boot_results, alpha = alpha, ci = show.ci,
+                               mean.diff = mean.diff)
 
   } else if (do.boot == FALSE) {
 
@@ -40,11 +59,10 @@ summary.mxGlm <- function(object,
 
   }
 
-  if (check.time == TRUE & do.boot == TRUE) {
-    mx_summary$time <- boot_results$time
-  } else if (check.time == TRUE & do.boot == FALSE) {
-    warning("'check.time' only returned for 'do.boot' = TRUE")
-  }
+  # Append more info to summary
+  mx_summary$mean.diff <- mean.diff
+  mx_summary$B <- B
+  mx_summary$do.boot <- do.boot
 
   # Show preliminary results
   class(mx_summary) <- 'mxSummary'
