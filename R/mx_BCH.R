@@ -4,6 +4,27 @@
 # This function uses the BCH approach to predict distal outcomes by latent class
 # membership in a glm model framework.
 
+#' mx_BCH
+#'
+#' This function uses BCH to predict distal outcomes by latent class membership in a GLM framework.
+#'
+#' @param formula.tmb Specify the formula object: "latent_class"
+#' @param data Your data
+#' @param post.prob A list of latent class probability columns
+#' @param prior.prob Prior probabilities; if NULL, will be calculated
+#' @param family A GLM object specifying the error distribution. "Gaussian" assumes normal error distribution
+#' @param robust.se Robust standard error correction. Currently set to "none", as it is not available
+#' @param id A column in data that has original ID numbers
+#' @param reference_group The reference group when latent class is the predictor
+#'
+#' @return A list of class \code{"mxGlm"} containing:
+#' \describe{
+#'   \item{\code{model}}{The fitted model object returned by \code{mxBCHfit}.}
+#'   \item{\code{data}}{A long-format data frame with class assignment and BCH weights.}
+#'   \item{\code{formula}}{The final formula used in model estimation.}
+#' }
+#' @export
+
 mx_BCH <- function(formula.tmb = NULL,
                    data = NULL,
                    post.prob = NULL,

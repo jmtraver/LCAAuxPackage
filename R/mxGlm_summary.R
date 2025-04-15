@@ -1,5 +1,8 @@
 
 # ------------------------------ mxGlm_summary() -------------------------------
+#' @export
+
+
 
 mxGlm_summary <- function(mxGlm_obj,
                           alpha = 0.05,

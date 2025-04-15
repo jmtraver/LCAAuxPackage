@@ -1,8 +1,20 @@
 
 # ------------------------------ assigned_class() ------------------------------
+#' @export
 
 # This function creates a new data.frame that includes the modal class
 # assignment dummy variables
+
+#' Assign Modal Class
+#'
+#' Adds the modal class assignment to a data frame based on highest posterior probability.
+#'
+#' @param data A data frame containing posterior class probabilities.
+#' @param post.prob A character vector of column names corresponding to the posterior probabilities for each class.
+#'
+#' @return A data frame with a new column \code{ass_class} indicating the assigned class for each row.
+#' @export
+
 
 assigned_class <- function(data, post.prob) {
   # number of classes

@@ -1,5 +1,6 @@
 
 # --------------------------------- get_frm() ----------------------------------
+#' @export
 
 # This function takes the user defined formula and exchanges "latent_class" for
 # the dummie variables class1, class2, ... classn_class.
