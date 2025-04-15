@@ -28,8 +28,7 @@ summary.mxGlm <- function(object,
 
 
   if (mean.diff == TRUE & do.boot == FALSE) {
-    warning("'mean.diff' only available for 'do.boot' = TRUE.")
-    mean.diff <- FALSE
+    warning("'mean.diff' inference only available for 'do.boot' = TRUE")
   }
   if (check.time == TRUE & do.boot == FALSE) {
     warning("'check.time' only returned for 'do.boot' = TRUE")
@@ -53,7 +52,8 @@ summary.mxGlm <- function(object,
   } else if (do.boot == FALSE) {
 
     # Get summary results
-    mx_summary <- mxGlm_summary(object, alpha = alpha, ci = show.ci)
+    mx_summary <- mxGlm_summary(object, alpha = alpha, ci = show.ci,
+                                mean.diff = mean.diff)
 
   }
 

@@ -3,7 +3,9 @@
 
 # ...description...
 
-boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE,
+boot_summary <- function(boot_return,
+                         alpha = 0.05,
+                         ci = TRUE,
                          mean.diff = TRUE) {
 
   boot_coefs <- boot_return$boot_results$t    # when using boot to fit the model
@@ -97,12 +99,9 @@ boot_summary <- function(boot_return, alpha = 0.05, ci = TRUE,
       LL <- orig_diffs - z_crit*diff_se
       UL <- orig_diffs + z_crit*diff_se
 
-      # results_ci <- data.frame(`LL` = LL,
-      #                          `UL` = UL)
       results_diff$LL <- LL
       results_diff$UL <- UL
 
-      # summary_return$conf_int <- results_ci
     }
 
     summary_return$difference <- results_diff

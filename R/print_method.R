@@ -29,9 +29,13 @@ print.mxSummary <- function(m) {
 
   if(do_boot == FALSE) {
     res_text <- "BCH analysis (analytic standard errors not implemented yet)"
+    diff_text <- "Mean comparisons (inference not implemented yet)"
+
   } else if (do_boot == TRUE) {
     res_text <- paste0("BCH analysis (with bootstrap standard errors: B = ",
                        B, ")")
+    diff_text <- paste0("Mean comparisons (with bootstrap standard errors: B = ",
+                        B, ")")
   }
 
   # Pretty output
@@ -40,8 +44,7 @@ print.mxSummary <- function(m) {
   cat("\n")
 
   if (mean_diff == TRUE) {
-    cat(paste0("Mean comparisons (with bootstrap standard errors: B = ",
-               B, ")\n"))
+    cat(paste0(diff_text, "\n"))
     print(m$difference)
     cat("\n")
   }
