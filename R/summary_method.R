@@ -1,5 +1,8 @@
 
-# ------------------------------ summary.mx_glm() ------------------------------
+# ------------------------------ summary.mxGlm() ------------------------------
+
+#'@method summary mxGlm
+#'@export
 
 ## idea set up:
 # - default class of mx_BCH is mx_glm, but people can manually set the class to

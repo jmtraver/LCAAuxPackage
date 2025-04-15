@@ -1,6 +1,9 @@
 
 # ---------------------------- print.mx_summary()  -----------------------------
 
+#'@method print mx_summary
+#'@export
+
 ## idea:
 # - this should print whatever we want the user to see when they call our
 #   summary function

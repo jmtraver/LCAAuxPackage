@@ -26,6 +26,11 @@ mx_BCH <- function(formula.tmb = NULL,
     stop("mx_BCH Error: post.prob cannot be NULL. Indicate a list of class probability columns.")
   }
 
+  # FOR NOW: Stop if family is not gaussian
+  if (is.null(post.prob)) {
+    stop("mx_BCH Error: post.prob cannot be NULL. Indicate a list of class probability columns.")
+  }
+
   # Initialize values
   n_class <- length(post.prob)
 
