@@ -14,7 +14,10 @@ if (!requireNamespace("naniar", quietly = TRUE)) {
   install.packages("naniar")
 }
 library(naniar)
-
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
+library(ggplot2)
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "cerulean"),
   titlePanel( "BCH Procedure for LCA with Distal Outcome"),
@@ -27,7 +30,6 @@ ui <- fluidPage(
     sidebarPanel(
       fileInput("file", "Upload CSV File", accept = ".csv"),
       uiOutput("var_select"),
-      uiOutput("member_select"),
       uiOutput('prob_select'),
       actionButton("submit_btn", "Let's Go!")
     ),
@@ -57,11 +59,6 @@ server <- function(input, output, session) {
     selectInput("dep_var", "Select Dependent Variable:", choices = names(data_reactive()))
   })
 
-  output$member_select <- renderUI({
-    req(data_reactive())
-    selectInput("member_var", "Select Class Membership Variable:", choices = names(data_reactive()))
-  })
-
 
   output$prob_select <- renderUI({
     req(data_reactive())
@@ -79,12 +76,12 @@ server <- function(input, output, session) {
 
   # Run regression after button click
   observeEvent(input$submit_btn, {
-    req(input$dep_var, input$member_var, input$prob_vars)
+    req(input$dep_var, input$prob_vars)
 
     df <- data_reactive()
 
     # Make sure all selected columns exist in data
-    if (!all(c(input$dep_var, input$member_vars, input$prob_vars) %in% names(df))) {
+    if (!all(c(input$dep_var, input$prob_vars) %in% names(df))) {
       values$equation <- "Selected variables not found in the dataset."
       values$model <- NULL
       return()
@@ -93,21 +90,23 @@ server <- function(input, output, session) {
     observeEvent(input$submit_btn, {
       output$missing_plot <- renderPlot({
         df <- data_reactive()
-        ggplot(df, aes_string(x = input$member_var, y = input$dep_var)) +
-          stat_summary(fun = mean, geom = "bar", fill = "steelblue") +
-          labs(
-            x = input$member_var,
-            y = paste("Mean of", input$dep_var),
-            title = paste("Bar Plot of", input$dep_var, "by", input$member_var)
-          ) +
-          theme_minimal()
+        selectVars <- unique(c(input$dep_var, input$indep_vars, input$prob_vars))
+        filteredDF <- df[,selectVars,drop=FALSE]
+        vis_miss(filteredDF)
+        vis_miss(filteredDF)+ theme(
+          axis.text.x = element_text(size = 14, angle = 45, hjust = 0),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 16),
+          plot.title = element_text(size = 18, face = "bold"),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 16)
+        )
       })
       })
 
     # Fit model
     latent_class <- input$member_var
     formula_str <- paste(input$dep_var, "~ ", "latent_class" )
-    print(formula_str)
     model <- mx_BCH(as.formula(formula_str), data = df, post.prob = input$prob_vars)
 
     # Create equation string
@@ -115,7 +114,7 @@ server <- function(input, output, session) {
     coef_names <- paste0("B", seq_along(my_coefs))
     equation_terms <- paste0(coef_names, "*", my_coefs, collapse = " + ")
 
-    equation <- paste(input$dep_var, "=", equation_terms)
+    equation <- paste(input$dep_var, "=", "B*latent_class")
 
     values$equation <- equation
     values$model <- model
