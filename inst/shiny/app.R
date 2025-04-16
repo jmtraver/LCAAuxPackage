@@ -21,7 +21,7 @@ ui <- fluidPage(
   p("This shiny app can be used to conduct the BCH procedure on an LCA model to
     accurately predict a distal outcome."),
   p("To use the app, you first must fit your LCA (without an outcome) in the modeling software of your choice.
-    Create a CSV file that includes your dependent variable and columns indicating the probaiblity of
+    Create a CSV file that includes your dependent variable, class membership, and columns indicating the probaiblity of
     class membership."),
   sidebarLayout(
     sidebarPanel(
