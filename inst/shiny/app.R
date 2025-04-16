@@ -27,6 +27,7 @@ ui <- fluidPage(
     sidebarPanel(
       fileInput("file", "Upload CSV File", accept = ".csv"),
       uiOutput("var_select"),
+      uiOutput("member_select"),
       uiOutput("indep_select"),
       uiOutput('prob_select'),
       uiOutput('fam_select'),
@@ -58,12 +59,17 @@ server <- function(input, output, session) {
     selectInput("dep_var", "Select Dependent Variable:", choices = names(data_reactive()))
   })
 
+  output$member_select <- renderUI({
+    req(data_reactive())
+    selectInput("member_var", "Select Class Membership Variable:", choices = names(data_reactive()))
+  })
+
   output$indep_select <- renderUI({
     req(data_reactive(), input$dep_var)
     selectInput("indep_vars", "Select Covariates:",
                 choices = setdiff(names(data_reactive()), input$dep_var),
                 multiple = TRUE)
-    })
+  })
 
   output$prob_select <- renderUI({
     req(data_reactive())
@@ -87,13 +93,12 @@ server <- function(input, output, session) {
 
   # Run regression after button click
   observeEvent(input$submit_btn, {
-    req(input$dep_var, input$indep_vars)
-    req(length(input$indep_vars) > 0)
+    req(input$dep_var, input$member_var, input$prob_vars)
 
     df <- data_reactive()
 
     # Make sure all selected columns exist in data
-    if (!all(c(input$dep_var, input$indep_vars, input$prob_vars) %in% names(df))) {
+    if (!all(c(input$dep_var, input$member_vars, input$prob_vars) %in% names(df))) {
       values$equation <- "Selected variables not found in the dataset."
       values$model <- NULL
       return()
@@ -102,7 +107,7 @@ server <- function(input, output, session) {
     observeEvent(input$submit_btn, {
       output$missing_plot <- renderPlot({
         df <- data_reactive()
-        selectVars <- unique(c(input$dep_var, input$indep_vars, input$prob_vars))
+        selectVars <- unique(c(input$dep_var, input$member_var, input$indep_vars, input$prob_vars))
         filteredDF <- df[,selectVars,drop=FALSE]
         vis_miss(filteredDF)+ theme(
           axis.text.x = element_text(size = 14, angle = 45, hjust = 0),
@@ -113,16 +118,17 @@ server <- function(input, output, session) {
           legend.title = element_text(size = 16)
         )
 
-    })})
+      })})
 
     # Fit model
-    formula_str <- paste(input$dep_var, "~", paste(input$indep_vars, collapse = " + "), " + ",
-                           paste(input$prob_vars, collapse = " + "))
-    fam_name <- paste0(input$fam_choice)
-    model <- glm(as.formula(formula_str), data = df, family = fam_name)
+    formula_str <- paste(input$dep_var, "~", paste(input$member_var, collapse = " + "), " + ",
+                         paste(input$prob_vars, collapse = " + "))
+    prob_list <- lapply(input$prob_vars, function(col) df[[col]])
+    names(prob_list) <- input$prob_vars
+    model <- mx_BCH(as.formula(formula_str), data = df, post.prob = prob_list)
 
     # Create equation string
-    my_coefs <- c(input$indep_vars, input$prob_vars)
+    my_coefs <- c(input$member_var, input$indep_vars)
     coef_names <- paste0("B", seq_along(my_coefs))
     equation_terms <- paste0(coef_names, "*", my_coefs, collapse = " + ")
 
@@ -146,6 +152,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
-
-#Y-Axis as outcome, X-Axis as Class Membership
-#Path diagram?
