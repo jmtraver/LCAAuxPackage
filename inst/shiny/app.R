@@ -35,10 +35,10 @@ ui <- fluidPage(
       h4("Regression Equation"),
       textOutput("regression_equation"),
       br(),
-      h4("Regression Output"),
+      h4("BCH Output"),
       verbatimTextOutput("regression_summary"),
       br(),
-      h4("Missing Data Plot"),
+      h4("Means across classes"),
       plotOutput("missing_plot")
     )
   )
