@@ -1,4 +1,14 @@
 # ~-~-~-~-~-~-~-~-~-~-~- loglik distal outcome function -~-~-~-~-~-~-~-~-~-~-~-#
+#' mx_BCHfit
+#'
+#' This function is used to fit the BCH model.
+#'
+#' @param n_class Number of classes
+#' @param y Outcome variable
+#' @param w Weights
+#' @param cls Class vector
+#'
+#'
 #' @export
 
 
@@ -17,6 +27,18 @@ n_class <- n_class
 y <- y
 w <- w
 class_vec <- cls
+
+#' BCH Log-Likelihood Function for Distal Outcome
+#'
+#' Computes the negative weighted log-likelihood of a distal continuous outcome
+#' conditional on latent class membership. Used in BCH-based latent class modeling.
+#'
+#' @param params Vector of parameters: class means (`mu`, length = n_class) and log(sigma).
+#' @param outcome Numeric vector of observed distal outcome (default: `y`).
+#' @param cv Integer or factor vector indicating class membership (default: `class_vec`).
+#'
+#' @return Negative weighted log-likelihood (scalar). Returns large value if any
+#' parameter or predicted value is non-finite.
 
 loglik_distal <- function(params, outcome = y, cv = class_vec) {
   mu <- params[1:n_class]

@@ -1,5 +1,29 @@
 
 # ------------------------------- boot_summary() -------------------------------
+#' Summarize Cluster Bootstrap Results
+#'
+#' Computes bootstrap standard errors, test statistics, p-values, and optional confidence intervals
+#' from a bootstrap object returned by `cluster_boot()`. Also computes pairwise differences between
+#' class estimates if requested.
+#'
+#' @param boot_return A list returned by `cluster_boot()` containing `boot_results` (a `boot` object)
+#'   and `coefs` (original parameter estimates).
+#' @param alpha Significance level for confidence intervals. Default is 0.05.
+#' @param ci Logical. If TRUE, returns confidence intervals. Default is TRUE.
+#' @param mean.diff Logical. If TRUE, computes pairwise mean differences between class estimates.
+#'   Default is TRUE.
+#'
+#' @return A list with the following elements:
+#' \describe{
+#'   \item{coefficients}{Data frame with estimate, bootstrap SE, z-value, and p-value.}
+#'   \item{conf_int}{(Optional) Confidence intervals for original estimates.}
+#'   \item{difference}{(Optional) Pairwise class comparisons with estimate, SE, z, p, and CI.}
+#'   \item{alpha}{Significance level used for CI.}
+#'   \item{boot_means}{Bootstrap means of each parameter (for reference).}
+#'   \item{B}{Number of bootstrap replicates.}
+#' }
+#'
+#'
 #' @export
 
 # ...description...

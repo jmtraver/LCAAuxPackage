@@ -1,5 +1,16 @@
 
 # ------------------------------- get_dummies() --------------------------------
+#' Create Modal Class Dummy Variables
+#'
+#' Adds dummy variables (e.g., `class1`, `class2`, ...) to a data.frame based on
+#' highest posterior probability among latent classes.
+#'
+#' @param data A data.frame containing posterior probabilities for each class.
+#' @param post.prob A character vector of column names in `data` representing
+#' posterior probabilities for each class.
+#'
+#' @return A data.frame with added modal class dummy variables (1 for assigned class, 0 otherwise).
+#'
 #' @export
 
 # This function creates a new data.frame that includes the modal class

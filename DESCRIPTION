@@ -2,12 +2,14 @@ Package: LCAAux
 Type: Package
 Title: Latent Class Analysis with Auxillary Variables
 Version: 0.1.0
-Author: Who wrote it
+Author: James Eagle, Megan Hynd, Jingyi Luo, Jen Traver, Hanna Weber
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: A latent class analysis with a distal outcome using the BCH method and bootstrapping. 
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Depends:
+Depends: R (>= 3.5.0),
+    dplyr,
+    boot,
+    stringr
 RoxygenNote: 7.3.2

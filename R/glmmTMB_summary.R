@@ -1,7 +1,20 @@
 
 # ----------------------------- glmmTMB_summary() ------------------------------
 
-# ...description...
+#' Summary for glmmTMB Model
+#'
+#' Extracts fixed effect estimates and standard errors from a `glmmTMB` object.
+#' Optionally computes confidence intervals.
+#'
+#' @param glmmTMB_obj A model object of class `glmmTMB`.
+#' @param alpha Significance level for confidence intervals. Default is 0.05.
+#' @param ci Logical. Whether to compute confidence intervals. Default is TRUE.
+#'
+#' @return A list with components:
+#' \item{coefficients}{Data frame of estimates, standard errors, z-values, and p-values.}
+#' \item{conf_int}{Data frame of lower and upper confidence bounds (if `ci = TRUE`).}
+#'
+#' @export
 
 glmmTMB_summary <- function(glmmTMB_obj, alpha = 0.05, ci = TRUE) {
 

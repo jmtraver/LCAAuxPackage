@@ -1,5 +1,22 @@
 
 # ------------------------------ mxGlm_summary() -------------------------------
+#' Summary for mxGlm Object
+#'
+#' Extracts parameter estimates and optionally computes confidence intervals
+#' and pairwise class mean differences from an `mxGlm` object.
+#'
+#' @param mxGlm_obj An object of class `mxGlm`, typically returned from a BCH model fitting function.
+#' @param alpha Significance level for confidence intervals. Default is 0.05.
+#' @param ci Logical. Whether to compute confidence intervals. Default is TRUE.
+#' @param mean.diff Logical. Whether to compute pairwise mean differences. Default is TRUE.
+#'
+#' @return A list with components:
+#' \item{coefficients}{Data frame of estimates, (placeholder) SEs, z-values, and p-values.}
+#' \item{conf_int}{Data frame of lower and upper confidence bounds (if `ci = TRUE`).}
+#' \item{difference}{Data frame of class mean differences (if `mean.diff = TRUE`).}
+#'
+#' @note SEs, z-values, and p-values are placeholders (set to NA); inferential support not implemented yet.
+#'
 #' @export
 
 
