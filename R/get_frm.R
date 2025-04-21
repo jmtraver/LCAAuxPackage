@@ -1,5 +1,17 @@
 
 # --------------------------------- get_frm() ----------------------------------
+#' Convert Formula with Latent Class to Assigned Class
+#'
+#' Replaces `latent_class` in a user-defined formula with a dummy variable (e.g., `ass_class`),
+#' assuming modal assignment has already been made. Returns a reformulated formula suitable
+#' for modeling with latent class dummies.
+#'
+#' @param frm_original A formula object that includes `latent_class` as a predictor.
+#' @param n_class Integer. Total number of latent classes.
+#' @param reference_group Integer. Index of the reference group. Default is 1.
+#'
+#' @return A reformulated formula with `latent_class` replaced by `ass_class`.
+#'
 #' @export
 
 # This function takes the user defined formula and exchanges "latent_class" for

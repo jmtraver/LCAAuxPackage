@@ -1,5 +1,25 @@
 
 # ------------------------------- cluster_boot() -------------------------------
+#' Cluster Bootstrap for mxBCH Model Estimates
+#'
+#' Performs cluster-level bootstrapping for a fitted mxBCH model.
+#'
+#' @param mxGlm_obj A fitted mxBCH model object containing elements:
+#'   - `y`: outcome variable,
+#'   - `class_vec`: latent class assignments,
+#'   - `weights`: BCH weights,
+#'   - `class_names`: names of latent classes,
+#'   - `data`: data.frame used for model fitting,
+#'   - `formula`: model formula,
+#'   - `par`: estimated model parameters.
+#' @param B Number of bootstrap iterations. Default is 999.
+#' @param seed Optional random seed for reproducibility.
+#' @param check.time Logical; if `TRUE`, prints start time.
+#'
+#' @return An object of class `"boot"` from the `boot` package containing bootstrap estimates.
+#'
+#' @import dplyr
+#' @importFrom boot boot
 #' @export
 
 # ...description...

@@ -8,7 +8,7 @@
 #'
 #' This function uses BCH to predict distal outcomes by latent class membership in a GLM framework.
 #'
-#' @param formula.tmb Specify the formula object: "latent_class"
+#' @param formula.bch Specify the formula object: "latent_class"
 #' @param data Your data
 #' @param post.prob A list of latent class probability columns
 #' @param prior.prob Prior probabilities; if NULL, will be calculated
@@ -25,7 +25,7 @@
 #' }
 #' @export
 
-mx_BCH <- function(formula.tmb = NULL,
+mx_BCH <- function(formula.bch = NULL,
                    data = NULL,
                    post.prob = NULL,
                    prior.prob = NULL,
@@ -35,7 +35,7 @@ mx_BCH <- function(formula.tmb = NULL,
                    reference_group = 1   # reference group when latent class is predictor
                    ) {
   # Stop if formula is NULL
-  if (is.null(formula.tmb)) {
+  if (is.null(formula.bch)) {
     stop("mx_BCH Error: formula cannot be NULL. Specify a formula object.")
   }
   # Stop if data is NULL
@@ -65,10 +65,10 @@ mx_BCH <- function(formula.tmb = NULL,
 
 
   # Get formula
-  new_formula <- get_frm(frm_original = formula.tmb, n_class = n_class,
+  new_formula <- get_frm(frm_original = formula.bch, n_class = n_class,
                          reference_group = reference_group)
-  #new_formula <- formula.tmb
-  # frm <- formula.tmb
+  #new_formula <- formula.bch
+  # frm <- formula.bch
   frm <- new_formula
 
   # Calculate prior probabilities if NULL
@@ -119,7 +119,7 @@ mx_BCH <- function(formula.tmb = NULL,
       rowSums(filter_class * repeated_weights)
 
   }
-  # fit1 <- glmmTMB(formula.tmb, weights = wstar_it, contrasts=NULL, data = data_long)
+  # fit1 <- glmmTMB(formula.bch, weights = wstar_it, contrasts=NULL, data = data_long)
   oc <- as.character(frm[2])
   czv <- as.character(frm[3])
 
@@ -129,6 +129,7 @@ mx_BCH <- function(formula.tmb = NULL,
   # append long format data file to return list
   fit1$data <- data_long
   fit1$formula <- frm
+  fit1$orig_formula <- formula.bch
 
   #fit1 <- glmmTMB(new_formula,
   #                weights = wstar_it,
