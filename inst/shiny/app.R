@@ -7,6 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
+
 library(shiny)
 library(bslib)
 library(stats)
@@ -18,19 +19,22 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
   install.packages("ggplot2")
 }
 library(ggplot2)
+
+devtools::load_all("/Users/jmtraver/Documents/GitHub/LCA-aux-package/LCAAux")
+
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "cerulean"),
   titlePanel( "BCH Procedure for LCA with Distal Outcome"),
-  p("This shiny app can be used to conduct the BCH procedure on an LCA model to
-    accurately predict a distal outcome."),
+  p("This shiny app can be used to conduct the BCH procedure on an LCA model to predict a distal outcome."),
   p("To use the app, you first must fit your LCA (without an outcome) in the modeling software of your choice.
-    Create a CSV file that includes your dependent variable, class membership, and columns indicating the probaiblity of
+    Create a CSV file that includes your dependent variable and columns indicating the probaiblity of
     class membership."),
   sidebarLayout(
     sidebarPanel(
       fileInput("file", "Upload CSV File", accept = ".csv"),
       uiOutput("var_select"),
       uiOutput('prob_select'),
+      uiOutput('boot_select'),
       actionButton("submit_btn", "Let's Go!")
     ),
     mainPanel(
@@ -40,7 +44,7 @@ ui <- fluidPage(
       h4("BCH Output"),
       verbatimTextOutput("regression_summary"),
       br(),
-      h4("Means across classes"),
+      h4("Missing Data"),
       plotOutput("missing_plot")
     )
   )
@@ -68,6 +72,13 @@ server <- function(input, output, session) {
   })
 
 
+  output$boot_select <- renderUI({
+    req(data_reactive())
+    selectInput("boot_vars", "Would you like the results to be bootstrapped?",
+                choices = c("Yes", "No"),
+                selected = "No")
+  })
+
   # Store regression result
   values <- reactiveValues(
     equation = NULL,
@@ -92,8 +103,8 @@ server <- function(input, output, session) {
         df <- data_reactive()
         selectVars <- unique(c(input$dep_var, input$indep_vars, input$prob_vars))
         filteredDF <- df[,selectVars,drop=FALSE]
-        vis_miss(filteredDF)
-        vis_miss(filteredDF)+ theme(
+        vis_miss(df)
+        vis_miss(df)+ theme(
           axis.text.x = element_text(size = 14, angle = 45, hjust = 0),
           axis.text.y = element_text(size = 14),
           axis.title = element_text(size = 16),
@@ -127,7 +138,8 @@ server <- function(input, output, session) {
 
   output$regression_summary <- renderPrint({
     req(values$model)
-    summary(values$model)
+    user_flag <- input$boot_vars == "Yes"
+    summary.mxGlm(values$model, do.boot = user_flag)
   })
 
 
