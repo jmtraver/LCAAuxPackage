@@ -30,6 +30,7 @@ mx_BCH <- function(formula.bch = NULL,
                    post.prob = NULL,
                    prior.prob = NULL,
                    family = gaussian(),
+                   class.order = NULL,
                    robust.se = "none",
                    id = NULL,     # Do we still need?
                    reference_group = 1   # reference group when latent class is predictor
@@ -131,11 +132,20 @@ mx_BCH <- function(formula.bch = NULL,
   fit1$formula <- frm
   fit1$orig_formula <- formula.bch
 
-  #fit1 <- glmmTMB(new_formula,
-  #                weights = wstar_it,
-  #                # contrasts = NULL,
-  #                data = data_long,
-  #                family = family)
+  # If class order is supplied to function, change class ordering in output
+  if (!is.null(class.order)) {
+    if (length(class.order) != n_class) {
+      warning("Class order argument ignored, because the length of class.order does not match the number of classes.")
+      class_names_new <- 1:n_class
+    } else {
+      class_names <- fit1$class_names
+      class_names_new <- vector(length = n_class)
+      for (i in 1:n_class) {
+        class_names_new[class.order[i]] <- class_names[i]
+      }
+      fit1$class_names <- class_names_new
+    }
+  }
 
   class(fit1) <- 'mxGlm'
 
