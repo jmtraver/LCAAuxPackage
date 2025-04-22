@@ -13,6 +13,7 @@
 #' @param post.prob A list of latent class probability columns
 #' @param prior.prob Prior probabilities; if NULL, will be calculated
 #' @param family A GLM object specifying the error distribution. "Gaussian" assumes normal error distribution
+#' @param class.order A vector of integers specifying the class order for the posterior probability columns supplied. The default is to number the classes in the order the posterior probabilties are supplied.
 #' @param robust.se Robust standard error correction. Currently set to "none", as it is not available
 #' @param id A column in data that has original ID numbers
 #' @param reference_group The reference group when latent class is the predictor
