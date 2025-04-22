@@ -20,7 +20,8 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 }
 library(ggplot2)
 
-devtools::load_all("/Users/jmtraver/Documents/GitHub/LCA-aux-package/LCAAux")
+#devtools::load_all("/Users/jmtraver/Documents/GitHub/LCA-aux-package/LCAAux")
+devtools::install_github("jmtraver/LCAAuxPackage")
 
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "cerulean"),
