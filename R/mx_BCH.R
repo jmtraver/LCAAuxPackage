@@ -93,7 +93,8 @@ mx_BCH <- function(formula.bch = NULL,
     }
   }
   # Solve D matrix
-  weights <- solve(D)      # Should we transpose as well??? - Probably, let's check with Dans Code! - HW
+  # weights <- solve(D)      # Should we transpose as well??? - Probably, let's check with Dans Code! - HW
+  weights <- t(solve(D))     # Yes, we need the transpose in order for the weights to work correctly (HW)
 
   # Pivot longer
   # Pivoting with rep() is necessary to recognize clustering in the rownames
@@ -121,6 +122,7 @@ mx_BCH <- function(formula.bch = NULL,
       rowSums(filter_class * repeated_weights)
 
   }
+
   # fit1 <- glmmTMB(formula.bch, weights = wstar_it, contrasts=NULL, data = data_long)
   oc <- as.character(frm[2])
   czv <- as.character(frm[3])
